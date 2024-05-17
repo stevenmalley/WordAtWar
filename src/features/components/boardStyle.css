@@ -1,0 +1,83 @@
+.VocabbleBoard {
+}
+
+.boardSpace {
+  border: 1px solid grey;
+  width: 35px;
+  height: 35px;
+  position: relative;
+  cursor: pointer;
+}
+
+.boardSpace.boardSpace-faded::before {
+  content: "";
+  background-color: rgba(255,255,255,0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 35px;
+  height: 35px;
+}
+
+.boardSpace.board-centre {
+  background-color: violet;
+}
+
+.boardSpace.tripleWord {
+  background-color: red;
+}
+
+.boardSpace.doubleWord {
+  background-color: orange;
+}
+
+.boardSpace.tripleLetter {
+  background-color: darkblue;
+}
+
+.boardSpace.doubleLetter {
+  background-color: skyblue;
+}
+
+
+/* TILES */
+
+.playerTile {
+  border: 1px solid orange;
+  width: 33px;
+  height: 33px;
+  position: relative;
+  cursor: pointer;
+}
+
+.playerTile-letter {
+  font-size: 23px;
+  position: relative;
+}
+
+.playerTile-score {
+  font-size: 10px;
+  position: absolute;
+  right: 3px;
+  top: 0;
+}
+
+.VocabblePlayerTiles {
+  display: flex;
+  margin-top: 30px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 3px solid grey;
+}
+
+.VocabblePlayerTiles:hover {
+  border-color: orange;
+}
+
+.playerTile.selected {
+  background-color: gold;
+}
+
+.playerTile.locked {
+  background-color: lightgrey;
+}
