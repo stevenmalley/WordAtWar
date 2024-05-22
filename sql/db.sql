@@ -30,7 +30,7 @@ CREATE TABLE tile (
   letter char(1),
   score INTEGER,
   location TEXT, -- "board", "bag", or playerID of player who has it in their supply
-  position INTEGER, -- order in bag, on board (row*width + col), or in player supply
+  position INTEGER, -- order in bag, on board ((row-1)*width+col, giving values 1 to width*width), or in player supply
   gameID INTEGER REFERENCES game(id),
   PRIMARY KEY (id, gameID)
 );

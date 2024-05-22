@@ -2,9 +2,9 @@ import { createSlice } from '@reduxjs/toolkit';
 
 
 const fakeLogin = {
-  name: "Flibbet",
-  playerID: 2, //3834109,
-  currentGameID: 24
+  name: "Splong",
+  playerID: 1, //3834109,
+  currentGameID: null
 }
 
 
@@ -16,6 +16,8 @@ export const userSlice = createSlice({
   //[],
   
   reducers: {
+    setUser:(user,action) => action.payload,
+    setCurrentGame:(user,action) => {user.currentGameID = action.payload}
     // getBoard:(board,action) => action.payload,
     // loadBoard:(board,action) => action.payload,
     // placeTile:(board,action) => {
@@ -41,6 +43,16 @@ export const userSlice = createSlice({
 export const selectUser = (state) => state.user;
 
 
+export const setUser = (user) => {
+  return (dispatch, getState) => {
+    dispatch({type: 'user/setUser', payload: user});
+  }
+}
+export const setCurrentGame = (gameID) => {
+  return (dispatch, getState) => {
+    dispatch({type: 'user/setCurrentGame', payload: gameID});
+  }
+}
 // export const getBoard = () => {
 //   return async (dispatch, getState) => {
 //     const response = await fetchBoardData(5);

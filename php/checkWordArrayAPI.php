@@ -22,7 +22,7 @@ if (!isset($_GET['word'])) {
   $first_letter = $word[0];
   $word_length = strlen($word);
 
-  if ($word_length < 2 || $word_length > 15 || preg_match("/[^A-Za-z]/",$word)) {
+  if ($word_length < 2 || $word_length > 15 || preg_match("/[^A-Z]/",$word)) {
     $output['result'] = 'false';
     $output['message'] = $word." not recognised";
 

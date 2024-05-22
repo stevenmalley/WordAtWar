@@ -1,4 +1,5 @@
 <?php
-$stuff = [1,2,3];
-
-echo "number $stuff[0] 2 3";
+include('checkWord.php');
+include_once('checkWord.php');
+include_once('checkWord.php');
+echo "ok";

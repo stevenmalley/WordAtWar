@@ -107,6 +107,14 @@ switch ($gameMode) {
   case "feud" : $tileDistribution = $wordFeudTiles; break;
   case "friends" : $tileDistribution = $wordsWithFriendsTiles; break;
   case "custom" : break; // TODO create random bonus pattern, decide how to choose tile distribution
+  default :
+    $output['status']['code'] = "404";
+    $output['status']['name'] = "failure";
+    $output['status']['description'] = "game mode '$gameMode' not recognised";
+    $output['data'] = [];
+    mysqli_close($conn);
+    echo json_encode($output);
+    exit;
 }
 
 $tiles = [];
@@ -128,6 +136,8 @@ while (sizeof($tiles) > 0) {
 
 include("config.php");
 
+header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Headers: *");
 header('Content-Type: application/json; charset=UTF-8');
 
 $conn = new mysqli($cd_host, $cd_user, $cd_password, $cd_dbname, $cd_port, $cd_socket);
@@ -177,12 +187,12 @@ $query->execute();
 
 
 
+// include('getGameDataProcess.php');
+
+
+
+
 $output['gameID'] = $gameID;
-$output['tiles'] = [
-  'player1' => array_slice($shuffledTiles,0,7),
-  'player2' => array_slice($shuffledTiles,7,7)
-];
+$output['message'] = "New game created successfully";
 
 echo json_encode($output);
-
-exit;

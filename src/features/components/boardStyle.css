@@ -1,4 +1,62 @@
+.User {
+  font-size: 18px;
+  color: grey;
+  text-align: left;
+}
+
+.Vocabble h1 {
+  margin: 10px;
+}
+
+.GameInfo {
+  display: flex;
+  justify-content: space-between;
+}
+
+.GameInfo span {
+  border-radius: 10px 10px 0px 0px;
+  padding: 8px 12px;
+}
+
+.GameInfo span.activePlayer {
+  color: white;
+  background-color: #040;
+}
+
+.GameInfo span.activePlayer.currentPlayer {
+  background-color: green;
+}
+
+.BlankTileChoice-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 100;
+}
+
+.BlankTileChoice-buttons {
+  position: absolute;
+  box-sizing: border-box;
+  top: 40%;
+  height: 20%;
+  left: 10%;
+  width: 80%;
+  z-index: 101;
+  background: white;
+  padding: 20px;
+  border: 5px solid gold;
+}
+
+.BlankTileChoice-buttons button {
+  height: 30px;
+  width: 30px;
+}
+
 .VocabbleBoard {
+  border: 10px solid grey;
 }
 
 .boardSpace {
@@ -80,4 +138,9 @@
 
 .playerTile.locked {
   background-color: lightgrey;
+}
+
+.BagCount {
+  font-size: 20px;
+  float: right;
 }

@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchTileData, drawTiles } from './vocabbleAPI';
 
 
 /**
@@ -21,11 +20,9 @@ export const tileSlice = createSlice({
   name: 'tiles',
   initialState: [],
   reducers: {
-    getTiles:(tiles,action) => action.payload,
     loadTiles:(tiles,action) => action.payload,
     selectTile:(tiles,action) => {
       // toggle the clicked tile and deselect all other tiles
-      console.log("st",action);
       tiles.forEach(tile => tile.selected = (tile.id === action.payload && !tile.locked) ? !tile.selected : false);
     },
     deselectTiles:(tiles,action) => {
@@ -80,14 +77,6 @@ export const selectTiles = (state) => state.tiles;
 
 
 
-
-export const getTiles = () => {
-  return async (dispatch, getState) => {
-    const response = await fetchTileData(5,2); // gameID, playerID
-    dispatch({type: 'tiles/getTiles', payload: response});
-  }
-};
-
 export const loadTiles = (tiles) => {
   return async (dispatch, getState) => {
     dispatch({type: 'tiles/loadTiles', payload: tiles});
@@ -115,20 +104,5 @@ export const placeTile = (tileID,position) => {
 export const returnTile = (playerID,tileID) => {
   return (dispatch, getState) => {
     dispatch({type: 'tiles/returnTile', payload: {playerID,tileID}});
-  }
-}
-
-export const addTiles = () => {
-  // async function retrieving new tiles from the API
-  return async (dispatch, getState) => {
-    const response = await drawTiles(5,2); // gameID, playerID
-    dispatch({type: 'tiles/addTiles', payload: response});
-  }
-}
-
-export const submit = (playerID, gameID, tiles) => {
-  // async function sending placed tiles to the server to check for legality
-  return async (dispatch, getState) => {
-    dispatch({type: 'tiles/submit', payload: null});
   }
 }

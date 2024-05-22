@@ -1,62 +1,70 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectUser } from './userSlice';
-import { getBoard, loadBoard, selectBoard } from './boardSlice';
-import { selectTiles, loadTiles } from './tileSlice';
+import { selectUser, setCurrentGame } from './userSlice';
+import { selectGame } from './gameSlice';
+import { selectBoard } from './boardSlice';
+import { selectTiles } from './tileSlice';
+import { selectBlanks } from './blanksSlice';
 import { BoardSpace } from './BoardSpace';
 import { PlayerTiles } from './PlayerTiles';
+import { BlankTileChoice } from './BlankTileChoice';
 import { GameControls } from './GameControls';
-import { fetchGameDataAPI } from './vocabbleAPI';
+import { loadGameData } from './utils';
 import './boardStyle.css';
 
 
 
 export function Vocabble() {
-  const { playerID, currentGameID } = useSelector(selectUser);
+  const { name : username, playerID, currentGameID } = useSelector(selectUser);
+  const game = useSelector(selectGame);
   const board = useSelector(selectBoard);
   const tiles = useSelector(selectTiles);
+  const blanks = useSelector(selectBlanks);
   const dispatch = useDispatch();
 
-  //useEffect(()=>{dispatch(getBoard())},[]);
 
-  function buildBoard(width,bonuses) {
-    const gameBoard = [];
-    for (let row = 0; row < width; row++) {
-      const boardRow = [];
-      gameBoard.push(boardRow);
-      for (let col = 0; col < width; col++) {
-        boardRow.push({letter:null,bonus:null});
-      }
+
+  /** TESTING */
+  useEffect(() => {
+    async function fetchLatestGame() {
+      const response = await fetch(`http://localhost/vocabble/php/findLatestGame.php`);
+      const json = await response.json();
+      dispatch(setCurrentGame(json.gameID));
     }
-    for (let bonusType in bonuses) {
-      bonuses[bonusType].forEach(coord => gameBoard[coord[0]][coord[1]].bonus = bonusType);
-    }
-    gameBoard[Math.floor(gameBoard.length/2)][Math.floor(gameBoard[0].length/2)].centre = true;
-    return gameBoard;
-  }
+    fetchLatestGame();
+  },[]);
+  
 
   
   useEffect(() => {
-    async function fetcher() {
-      console.log("FETCHING");
-      const gameData = await fetchGameDataAPI(currentGameID,playerID);
-      dispatch(loadBoard(buildBoard(gameData.game.width,gameData.bonuses)));
-      dispatch(loadTiles(gameData.tiles.map(tile => ({...tile, location: parseInt(tile.location) || tile.location, selected: false, locked: tile.location === "board"}))));
+    if (currentGameID) {
+      async function fetchGame() {
+        const response = await fetch(`http://localhost/vocabble/php/getGameData.php?gameID=${currentGameID}&playerID=${playerID}`);
+        
+        const gameData = await response.json();
+        loadGameData(dispatch,gameData);
+      }
+      fetchGame();
     }
-    fetcher();
-  },[]);
+  },[playerID,currentGameID]);
 
 
   return (
     <div className="Vocabble">
+      <div className="User">{username}</div>
       <h1>Word at War</h1>
+      <div className="GameInfo">
+        <span className={(game.activePlayer === 1 ? "activePlayer" : "")+(game.player1 === playerID ? " currentPlayer" : "")}>{game.player1name} - {game.player1score}</span>
+        <span className={(game.activePlayer === 2 ? "activePlayer" : "")+(game.player2 === playerID ? " currentPlayer" : "")}>{game.player2name} - {game.player2score}</span>
+      </div>
       <div className="VocabbleBoard">
+        <BlankTileChoice />
         {
           board.map((boardRow,r) =>
             <div key={"boardRow"+r} style={{display:"flex"}}>
               {
                 boardRow.map((boardSquare,c) => {
-                  const tile = tiles.find(tile => tile.location === "board" && Math.ceil(tile.position/15) === r && tile.position%15 === c);
+                  const tile = tiles.find(tile => tile.location === "board" && Math.floor((tile.position-1)/15) === r && (tile.position-1)%15 === c);
                   return <BoardSpace key={`boardSquare${r}-${c}`} row={r} col={c} data={boardSquare} tile={tile} />
                 })
               }
@@ -65,6 +73,7 @@ export function Vocabble() {
         }
       </div>
       <PlayerTiles />
+      <div className="BagCount">Tiles remaining: {game.bag}</div>
       <GameControls />
     </div>
   );

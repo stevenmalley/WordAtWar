@@ -9,10 +9,14 @@ export const gameSlice = createSlice({
     player2: null,
     player1score: null,
     player2score: null,
+    player1name: null,
+    player2name: null,
+    activePlayer: null,
     bag: null
   },
   
   reducers: {
+    loadGame:(game,action) => action.payload
     // getBoard:(board,action) => action.payload,
     // loadBoard:(board,action) => action.payload,
     // placeTile:(board,action) => {
@@ -47,11 +51,11 @@ export const selectGame = (state) => state.game;
 //   }
 // };
 
-// export const loadBoard = (board) => {
-//   return (dispatch, getState) => {
-//     dispatch({type: 'board/loadBoard', payload: board});
-//   }
-// }
+export const loadGame = (game) => {
+  return (dispatch, getState) => {
+    dispatch({type: 'game/loadGame', payload: game});
+  }
+}
 
 // export const placeTile = (row,col,tile) => {
 //   return (dispatch, getState) => {

@@ -10,16 +10,28 @@
  * 
  */
 
-function checkWord($word) {
+$output = [
+  'error' => "",
+  'word' => "",
+  'result' => "",
+  'message' => "",
+  'recursions' => 0
+];
 
-  $word = strtoupper($word);
+if (!isset($_GET['word'])) {
+  $output['error'] = "no word supplied";
+} else {
+
+  $word = strtoupper($_GET['word']);
+  $output['word'] = $word;
   $recursions = 0;
   $word_length = strlen($word);
 
   if ($word_length < 2 || $word_length > 15 || preg_match("/[^A-Z]/",$word)) {
-    return false;
-
+    $output['result'] = "false";
+    $output['message'] = "$word not found";
   } else {
+
 
     $first_letter = $word[0];
     $list_file = "./wordFiles/$first_letter/$word_length.txt";
@@ -29,10 +41,12 @@ function checkWord($word) {
 
     $recursionLimit = 120;
 
+
     while ($lower_word_limit <= $upper_word_limit) {
 
       if ($recursions++ >= $recursionLimit) {
-        throw new Error("check word recursion limit exceeded");
+        $output['error'] = "R limit exceeded. ".$lower_word_limit."-".$upper_word_limit." ".file_get_contents($list_file,false,null,$lower_word_limit*$word_length,($upper_word_limit-$lower_word_limit)*$word_length);
+        break;
       }
 
       $search_target = floor(($lower_word_limit+$upper_word_limit)/2);
@@ -42,7 +56,9 @@ function checkWord($word) {
       // echo "$lower_word_limit $search_target $upper_word_limit $search_word\n";
       
       if ($search_word == $word) {
-        return true;
+        $output['result'] = "true";
+        $output['message'] = "$word OK";
+        break;
       } else {
         $c = 1;
         while ($word[$c] == $search_word[$c]) $c++;
@@ -57,6 +73,14 @@ function checkWord($word) {
     }
   }
 
-  return false;
+  if ($output['result'] != "true") {
+    $output['result'] = "false";
+    $output['message'] = "$word not found";
+  }
+
+  $output['recursions'] = $recursions;
 
 }
+
+header('Content-Type: application/json; charset=UTF-8');
+echo json_encode($output);
