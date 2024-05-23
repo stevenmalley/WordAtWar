@@ -30,9 +30,6 @@ export function GameControls() {
           blanks:placedBlanks.map(blank => [blank.id,blank.letter])})});
       //console.log(response.text());
       const gameData = await response.json();
-
-      console.log(gameData.score);
-
       if (gameData.status?.name === "failure") alert(gameData.status.message);
       else loadGameData(dispatch,gameData,false);
     }

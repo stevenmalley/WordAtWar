@@ -10,7 +10,6 @@ import { PlayerTiles } from './PlayerTiles';
 import { BlankTileChoice } from './BlankTileChoice';
 import { GameControls } from './GameControls';
 import { loadGameData } from './utils';
-import './boardStyle.css';
 
 
 
@@ -48,33 +47,36 @@ export function Vocabble() {
     }
   },[playerID,currentGameID]);
 
+  
 
   return (
-    <div className="Vocabble">
-      <div className="User">{username}</div>
-      <h1>Word at War</h1>
-      <div className="GameInfo">
-        <span className={(game.activePlayer === 1 ? "activePlayer" : "")+(game.player1 === playerID ? " currentPlayer" : "")}>{game.player1name} - {game.player1score}</span>
-        <span className={(game.activePlayer === 2 ? "activePlayer" : "")+(game.player2 === playerID ? " currentPlayer" : "")}>{game.player2name} - {game.player2score}</span>
+    <div className={"Vocabble"+(game["player"+game.activePlayer] === playerID ? " activePlayer" : "")}>
+      <div className="Wrapper">
+        <div className="User">{username}</div>
+        <h1>Word at War</h1>
+        <div className="GameInfo">
+          <span className={game.activePlayer === 1 ? "activePlayer" : ""}>{game.player1name} &ndash; {game.player1score}</span>
+          <span className={game.activePlayer === 2 ? "activePlayer" : ""}>{game.player2name} &ndash; {game.player2score}</span>
+        </div>
+        <div className="VocabbleBoard">
+          <BlankTileChoice />
+          {
+            board.map((boardRow,r) =>
+              <div key={"boardRow"+r} style={{display:"flex"}}>
+                {
+                  boardRow.map((boardSquare,c) => {
+                    const tile = tiles.find(tile => tile.location === "board" && Math.floor((tile.position-1)/15) === r && (tile.position-1)%15 === c);
+                    return <BoardSpace key={`boardSquare${r}-${c}`} data={boardSquare} tile={tile} />
+                  })
+                }
+              </div>
+            )
+          }
+        </div>
+        <PlayerTiles />
+        <div className="BagCount">Tiles remaining: {game.bag}</div>
+        <GameControls />
       </div>
-      <div className="VocabbleBoard">
-        <BlankTileChoice />
-        {
-          board.map((boardRow,r) =>
-            <div key={"boardRow"+r} style={{display:"flex"}}>
-              {
-                boardRow.map((boardSquare,c) => {
-                  const tile = tiles.find(tile => tile.location === "board" && Math.floor((tile.position-1)/15) === r && (tile.position-1)%15 === c);
-                  return <BoardSpace key={`boardSquare${r}-${c}`} row={r} col={c} data={boardSquare} tile={tile} />
-                })
-              }
-            </div>
-          )
-        }
-      </div>
-      <PlayerTiles />
-      <div className="BagCount">Tiles remaining: {game.bag}</div>
-      <GameControls />
     </div>
   );
 }

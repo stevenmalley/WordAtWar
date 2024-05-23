@@ -13,18 +13,8 @@ export function PlayerTiles() {
   const playerTiles = tiles.filter(tile => tile.location === playerID).sort((a,b) => a.position - b.position);
   const dispatch = useDispatch();
 
-  function handleClick() {
-    const selectedTile = tiles.find(tile => tile.selected);
-    if (selectedTile) {
-      dispatch(returnTile(playerID,selectedTile.id));
-      if (selectedTile.letter === null) {
-        dispatch(clearBlankChoice(selectedTile.id));
-      }
-    }
-  }
-
   return (
-    <div className="VocabblePlayerTiles" onClick={handleClick}>
+    <div className="VocabblePlayerTiles">
       {
         playerTiles.map((tile,t) =>
           <Tile key={`playerTile-${t}`} index={t} data={tile} />

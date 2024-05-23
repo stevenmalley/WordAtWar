@@ -3,11 +3,170 @@
 }
 
 
-.App-header {
+.Vocabble {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: start;
   font-size: calc(10px + 2vmin);
+}
+
+.App {
+  position: relative;
+  user-select: none;
+}
+
+.User {
+  font-size: 18px;
+  color: grey;
+  text-align: left;
+}
+
+.Vocabble h1 {
+  margin: 10px;
+}
+
+.GameInfo {
+  display: flex;
+  justify-content: space-between;
+}
+
+.GameInfo span {
+  border-radius: 10px 10px 0px 0px;
+  padding: 8px 12px;
+}
+
+.GameInfo span.activePlayer {
+  color: white;
+  background-color: grey;/* #040; */
+}
+
+.Vocabble.activePlayer .GameInfo span.activePlayer {
+  background-color: green;
+}
+
+.BlankTileChoice-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 100;
+}
+
+.BlankTileChoice-buttons {
+  position: absolute;
+  box-sizing: border-box;
+  top: 40%;
+  height: 20%;
+  left: 10%;
+  width: 80%;
+  z-index: 101;
+  background: white;
+  padding: 20px;
+  border: 5px solid gold;
+}
+
+.BlankTileChoice-buttons button {
+  height: 30px;
+  width: 30px;
+}
+
+.Vocabble .VocabbleBoard {
+  border: 10px solid grey;
+}
+
+.Vocabble.activePlayer .VocabbleBoard {
+  border-color: green;
+}
+
+.boardSpace {
+  border: 1px solid grey;
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+}
+
+.boardSpace.boardSpace-faded::before {
+  content: "";
+  background-color: rgba(255,255,255,0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 35px;
+  height: 35px;
+}
+
+.boardSpace.board-centre {
+  background-color: violet;
+}
+
+.boardSpace.tripleWord {
+  background-color: red;
+}
+
+.boardSpace.doubleWord {
+  background-color: orange;
+}
+
+.boardSpace.tripleLetter {
+  background-color: darkblue;
+}
+
+.boardSpace.doubleLetter {
+  background-color: skyblue;
+}
+
+
+/* TILES */
+
+.tile {
+  border: 1px solid orange;
+  width: 33px;
+  height: 33px;
+  position: relative;
+  cursor: pointer;
+  background: rgba(255,255,255,0.6);
+  /* transition: top 0.5s;
+  transition: left 0.5s; */
+}
+
+.tile-letter {
+  font-size: 23px;
+  position: relative;
+}
+
+.tile-score {
+  font-size: 10px;
+  position: absolute;
+  right: 3px;
+  top: 0;
+}
+
+.tile.selected {
+  background-color: gold;
+}
+
+.tile.locked {
+  background-color: rgb(255, 240, 207);
+}
+
+.VocabblePlayerTiles {
+  display: flex;
+  margin-top: 30px;
+  height: 35px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 3px solid rgb(255, 240, 207);
+}
+
+.VocabblePlayerTiles:hover {
+  border-color: orange;
+}
+
+.BagCount {
+  font-size: 20px;
+  float: right;
 }
