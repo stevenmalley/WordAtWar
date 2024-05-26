@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchBoardData } from './vocabbleAPI';
 
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -21,7 +20,6 @@ export const boardSlice = createSlice({
   initialState: [],
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
-    getBoard:(board,action) => action.payload,
     loadBoard:(board,action) => action.payload,
     placeTile:(board,action) => {
       const { row, col, tile } = action.payload;
@@ -75,13 +73,6 @@ export const selectBoard = (state) => state.board;
 // };
 
 
-
-export const getBoard = () => {
-  return async (dispatch, getState) => {
-    const response = await fetchBoardData(5);
-    dispatch({type: 'board/getBoard', payload: response});
-  }
-};
 
 export const loadBoard = (board) => {
   return (dispatch, getState) => {

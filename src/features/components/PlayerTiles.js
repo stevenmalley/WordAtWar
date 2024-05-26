@@ -11,13 +11,19 @@ export function PlayerTiles() {
   const { playerID } = useSelector(selectUser);
   const tiles = useSelector(selectTiles);
   const playerTiles = tiles.filter(tile => tile.location === playerID).sort((a,b) => a.position - b.position);
-  const dispatch = useDispatch();
 
   return (
     <div className="VocabblePlayerTiles">
       {
         playerTiles.map((tile,t) =>
-          <Tile key={`playerTile-${t}`} index={t} data={tile} />
+          <div key={`playerTileHolder-${t}`} className="playerTileHolder">
+            <Tile key={`playerTile-${t}`} index={t} data={tile} />
+          </div>
+        )
+      }
+      {
+        Array(7-playerTiles.length).fill(null).map((_,t) =>
+          <div key={`playerTileHolder-${t+playerTiles.length}`}></div>
         )
       }
     </div>

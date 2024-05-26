@@ -5,13 +5,15 @@ import { createSlice } from '@reduxjs/toolkit';
 export const gameSlice = createSlice({
   name: 'game',
   initialState: {
+    mode: null,
+    width: null,
     player1: null,
     player2: null,
     player1score: null,
     player2score: null,
+    activePlayer: null,
     player1name: null,
     player2name: null,
-    activePlayer: null,
     bag: null
   },
   

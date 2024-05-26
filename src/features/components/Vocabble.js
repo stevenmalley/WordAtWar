@@ -28,7 +28,8 @@ export function Vocabble() {
     async function fetchLatestGame() {
       const response = await fetch(`http://localhost/vocabble/php/findLatestGame.php`);
       const json = await response.json();
-      dispatch(setCurrentGame(json.gameID));
+      //dispatch(setCurrentGame(json.gameID));
+      dispatch(setCurrentGame(60));
     }
     fetchLatestGame();
   },[]);
@@ -62,11 +63,11 @@ export function Vocabble() {
           <BlankTileChoice />
           {
             board.map((boardRow,r) =>
-              <div key={"boardRow"+r} style={{display:"flex"}}>
+              <div key={"boardRow"+r} className="boardRow">
                 {
                   boardRow.map((boardSquare,c) => {
                     const tile = tiles.find(tile => tile.location === "board" && Math.floor((tile.position-1)/15) === r && (tile.position-1)%15 === c);
-                    return <BoardSpace key={`boardSquare${r}-${c}`} data={boardSquare} tile={tile} />
+                    return <BoardSpace key={`boardSquare${r}-${c}`} data={boardSquare} tile={tile} boardWidth={game.width} />
                   })
                 }
               </div>

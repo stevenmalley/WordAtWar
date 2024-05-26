@@ -68,14 +68,13 @@ export function Tile({ data }) {
     }
   }
 
-  function positionStyles() {
+  function tileStyles() {
     if (selected) {
       return {
         position:"absolute",
         top:(mouseCoords.y-16)+"px",
         left:(mouseCoords.x-16)+"px",
         zIndex: 200,
-        //pointerEvents: "none", // allow a BoardSpace beneath the dragged element to detect mouse events
       };
     } else return {};
   }
@@ -85,7 +84,7 @@ export function Tile({ data }) {
       className={"tile"+(selected? " selected" : "")+(locked? " locked" : "")}
       onMouseDown={locked? null : handleMouseDown}
       onMouseUp={selected? handleMouseUp : null}
-      style={positionStyles()}>
+      style={tileStyles()}>
       <div className="tile-letter">{letter || blankLetter}</div>
       <div className="tile-score">{score || ""}</div>
     </div>
