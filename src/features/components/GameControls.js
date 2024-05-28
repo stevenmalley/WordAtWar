@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUser, setUser } from './userSlice';
-import { selectGame } from './gameSlice';
-import { selectTiles } from './tileSlice';
-import { selectBlanks } from './blanksSlice';
-import { loadGameData } from './utils';
+import { selectGame, setSwapping } from './gameSlice';
+import { selectTiles, returnAllTiles, cancelSwaps } from './tileSlice';
+import { loadGameData, loadSwapData } from './utils';
 
 
 export function GameControls() {
@@ -13,21 +12,31 @@ export function GameControls() {
   const { playerID, currentGameID } = useSelector(selectUser);
   const game = useSelector(selectGame);
   const tiles = useSelector(selectTiles);
-  const blanks = useSelector(selectBlanks);
   const placedTiles = tiles.filter(tile => tile.location === "board" && !tile.locked);
-  const placedBlanks = blanks.filter(blank => placedTiles.map(tile => tile.id).includes(blank.id));
+  const placedBlanks = placedTiles.filter(tile => !tile.letter);
+  const swappedTiles = tiles.filter(tile => tile.swapping);
   const dispatch = useDispatch();
 
   
   async function submit() {
-    if (placedTiles.length > 0) {
+    if (game.swapping && swappedTiles.length > 0 && game.bag > 0) {
+      dispatch(setSwapping(false));
+      const response = await fetch('http://localhost/vocabble/php/submitSwap.php',
+        {method: "POST",
+        headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
+        body: JSON.stringify({playerID, gameID:currentGameID,
+          tiles:swappedTiles.map(tile => tile.id)})});
+      const swapData = await response.json();
+      if (swapData.status?.name === "failure") alert(swapData.status.message);
+      else loadSwapData(dispatch,swapData,playerID);
 
+    } else if (placedTiles.length > 0) {
       const response = await fetch('http://localhost/vocabble/php/submitPlay.php',
         {method: "POST",
         headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
         body: JSON.stringify({playerID, gameID:currentGameID,
           tiles:placedTiles.map(tile => [tile.id,tile.position]),
-          blanks:placedBlanks.map(blank => [blank.id,blank.letter])})});
+          blanks:placedBlanks.map(blank => [blank.id,blank.blankLetter])})});
       //console.log(response.text());
       const gameData = await response.json();
       if (gameData.status?.name === "failure") alert(gameData.status.message);
@@ -58,9 +67,16 @@ export function GameControls() {
     dispatch(setUser({...user, playerID:newPlayerID, name:newUsername}));
   }
 
+  function toggleSwap() {
+    dispatch(setSwapping(!game.swapping));
+    dispatch(cancelSwaps());
+  }
+
   return (
     <div className="GameControls">
-      <button onClick={submit}>SAVE</button>
+      <button onClick={toggleSwap} disabled={game.bag===0}>{game.swapping? "CANCEL SWAP" : "SWAP TILES"}</button>
+      <button onClick={() => dispatch(returnAllTiles(playerID))}>RETURN</button>
+      <button onClick={submit}>SUBMIT</button>
       <button onClick={switchUser}>SWITCH USER</button>
       <br />
       <br />

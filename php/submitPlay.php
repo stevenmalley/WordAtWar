@@ -55,22 +55,22 @@ $tileQuery = $query->get_result();
 while ($row = mysqli_fetch_assoc($tileQuery)) {
   if ($row['location'] == 'board') {
     // a tile already on the board
-    $row['row'] = floor(($row['position']-1)/15);
-    $row['col'] = ($row['position']-1)%15;
+    $row['row'] = floor(($row['position']-1)/$gameData['width']);
+    $row['col'] = ($row['position']-1)%$gameData['width'];
     array_push($boardTiles, $row);
 
   } else {
     // a player tile
+    array_push($playerTiles, $row);
     foreach($tiles as $tile) {
       // one of the submitted tiles
       if ($row['id'] == $tile[0]) {
         $row['position'] = $tile[1];
-        $row['row'] = floor(($tile[1]-1)/15);
-        $row['col'] = ($tile[1]-1)%15;
+        $row['row'] = floor(($tile[1]-1)/$gameData['width']);
+        $row['col'] = ($tile[1]-1)%$gameData['width'];
         $submittedTiles[] = $row;
       }
     }
-    array_push($playerTiles, $row);
   }
 }
 
@@ -171,7 +171,7 @@ if (sizeof($rowsUsed) > 1 && sizeof($colsUsed) > 1) {
   fail("Tiles must be placed in one line");
 }
 if (sizeof($rowsUsed) == 1) {
-  // tiles have been placed horizontally
+  // tiles have been placed horizontally (or only a single tile has been placed)
   $coordinate = $rowsUsed[0];
   $minCoord = min($colsUsed);
   $maxCoord = max($colsUsed);
@@ -194,8 +194,8 @@ for ($c = $minCoord; $c <= $maxCoord; $c++) {
   }
   if (!$tileFound) {
     foreach($boardTiles as $tile) {
-      $row = floor(($tile['position']-1)/15);
-      $col = ($tile['position']-1)%15;
+      $row = floor(($tile['position']-1)/$gameData['width']);
+      $col = ($tile['position']-1)%$gameData['width'];
       if (($horizontal && $col == $c && $row == $coordinate) ||
           (!$horizontal && $row == $c && $col == $coordinate)) {
         $tileFound = true;
@@ -231,7 +231,7 @@ if (sizeof($boardTiles) == 0) {
       }
     }
   }
-  if (!$neighbour) fail("Tiles must touch other tiles");
+  if (!$neighbour) fail("Tiles must be connected to other tiles");
 }
 
 
@@ -344,7 +344,7 @@ while ($newPosition < 7) {
 
 
 
-/* CALCULATE SCORE AND SWITCH ACTIVE PLAYER OR END GAME */
+/* CALCULATE SCORE */
 
 $bonuses;
 
@@ -414,7 +414,9 @@ if (mysqli_fetch_assoc($tileQuery)['COUNT(id)'] == 0) {
 }
 
 
+/* SWITCH ACTIVE PLAYER OR END GAME */
 
+// TODO end game
 
 $nextPlayer = $activePlayer == 1 ? 2 : 1;
 

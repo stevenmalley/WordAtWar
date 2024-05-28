@@ -1,7 +1,6 @@
-import { loadGame } from './gameSlice';
+import { loadGame, switchPlayer } from './gameSlice';
 import { loadBoard } from './boardSlice';
-import { loadTiles } from './tileSlice';
-import { clearBlanks } from './blanksSlice';
+import { loadTiles, updatePlayerTiles } from './tileSlice';
 
 function buildBoard(width,bonuses) {
   const gameBoard = [];
@@ -9,7 +8,7 @@ function buildBoard(width,bonuses) {
     const boardRow = [];
     gameBoard.push(boardRow);
     for (let col = 0; col < width; col++) {
-      boardRow.push({letter:null,bonus:null});
+      boardRow.push({bonus:null});
     }
   }
   for (let bonusType in bonuses) {
@@ -20,8 +19,26 @@ function buildBoard(width,bonuses) {
 }
 
 export function loadGameData(dispatch,gameData,includeBoard = true) {
+  gameData.swapping = false; // 'swapping tiles' mode should be disabled whenever game data is loaded (after each move and on refresh)
   dispatch(loadGame(gameData.game));
   if (includeBoard) dispatch(loadBoard(buildBoard(gameData.game.width,gameData.bonuses)));
-  dispatch(loadTiles(gameData.tiles.map(tile => ({...tile, location: parseInt(tile.location) || tile.location, selected: false, locked: tile.location === "board"}))));
-  dispatch(clearBlanks());
+  dispatch(loadTiles(gameData.tiles.map(tile => ({
+    ...tile,
+    location: parseInt(tile.location) || tile.location,
+    selected: false,
+    locked: tile.location === "board"}))));
+}
+
+export function loadSwapData(dispatch,swapData,playerID) {
+  /*
+    swapData = {
+      tilesRemoved: [tileID, ...],
+      newPlayerTiles: [{id,letter,score,location,position}, ...]}
+  */
+ dispatch(switchPlayer(swapData.activePlayer));
+  dispatch(updatePlayerTiles(swapData.newPlayerTiles.map(tile => ({
+    ...tile,
+    location: parseInt(tile.location),
+    selected: false,
+    locked: false})),playerID));
 }

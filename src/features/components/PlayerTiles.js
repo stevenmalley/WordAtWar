@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { selectUser } from './userSlice';
-import { returnTile, selectTiles } from './tileSlice';
-import { clearBlankChoice } from './blanksSlice';
+import { selectTiles } from './tileSlice';
+import { selectMouse } from './mouseSlice';
 import { Tile } from './Tile';
 
 
 export function PlayerTiles() {
 
   const { playerID } = useSelector(selectUser);
+  const { displacement } = useSelector(selectMouse);
   const tiles = useSelector(selectTiles);
   const playerTiles = tiles.filter(tile => tile.location === playerID).sort((a,b) => a.position - b.position);
 
@@ -17,7 +17,7 @@ export function PlayerTiles() {
       {
         playerTiles.map((tile,t) =>
           <div key={`playerTileHolder-${t}`} className="playerTileHolder">
-            <Tile key={`playerTile-${t}`} index={t} data={tile} />
+            <Tile key={`playerTile-${t}`} index={t} data={tile} displaced={t >= displacement} />
           </div>
         )
       }

@@ -5,20 +5,23 @@ import { createSlice } from '@reduxjs/toolkit';
 export const gameSlice = createSlice({
   name: 'game',
   initialState: {
-    mode: null,
-    width: null,
-    player1: null,
-    player2: null,
+    mode: null, // "feud", "scrabble", "friends", indicating which board is being used
+    width: null, // width of the board
+    player1: null, // player ID of the first player
+    player2: null, // player ID of the second player
     player1score: null,
     player2score: null,
-    activePlayer: null,
+    activePlayer: null, // 1 or 2, indicated whether it is currently the turn of player1 or player2
     player1name: null,
     player2name: null,
-    bag: null
+    bag: null, // how many tiles are in the bag
+    swapping: false // flag indicating whether the game is in "swapping" mode allowing the active player to swap their tiles (only possible when bag > 0)
   },
   
   reducers: {
-    loadGame:(game,action) => action.payload
+    loadGame:(game,action) => action.payload,
+    setSwapping:(game,action) => {game.swapping = action.payload},
+    switchPlayer:(game,action) => {game.activePlayer = action.payload}
     // getBoard:(board,action) => action.payload,
     // loadBoard:(board,action) => action.payload,
     // placeTile:(board,action) => {
@@ -57,10 +60,16 @@ export const loadGame = (game) => {
   return (dispatch, getState) => {
     dispatch({type: 'game/loadGame', payload: game});
   }
-}
+};
 
-// export const placeTile = (row,col,tile) => {
-//   return (dispatch, getState) => {
-//     dispatch({type: 'board/placeTile', payload: {row, col, tile}});
-//   }
-// };
+export const setSwapping = (swap) => {
+  return (dispatch, getState) => {
+    dispatch({type: 'game/setSwapping', payload: swap});
+  }
+};
+
+export const switchPlayer = (activePlayer) => {
+  return (dispatch, getState) => {
+    dispatch({type: 'game/switchPlayer', payload: activePlayer});
+  }
+};

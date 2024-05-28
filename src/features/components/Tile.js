@@ -1,21 +1,27 @@
 import { selectUser } from './userSlice';
-import { selectTile, placeTile, returnTile } from './tileSlice';
-import { placeBlank } from './blanksSlice';
-import { selectMouse, setMouseCoords } from './mouseSlice';
+import { selectGame } from './gameSlice';
+import { selectTile, placeTile, returnTile, clearBlankChoice, toggleSwap } from './tileSlice';
+import { selectMouse, setMouseCoords, setDisplacedPlayerTile } from './mouseSlice';
 import { useSelector, useDispatch } from 'react-redux';
 
-export function Tile({ data }) {
+export function Tile({ data, displaced = false }) {
 
   const { playerID } = useSelector(selectUser);
+  const { swapping:swapMode } = useSelector(selectGame);
   const dispatch = useDispatch();
-  const { letter, score, id, selected, locked, blankLetter } = data;
+  const { letter, score, id, selected, locked, blankLetter, location, position, swapping } = data;
   const { coords : mouseCoords } = useSelector(selectMouse);
 
-  function handleMouseDown(event) {
-    const { pageY : y, pageX : x } = event;
-    dispatch(setMouseCoords(x,y));
-    dispatch(selectTile(id));
-    event.stopPropagation();
+  function handleMouseDown(e) {
+    if (swapMode) {
+      dispatch(toggleSwap(id));
+    } else {
+      dispatch(setMouseCoords(e.pageX,e.pageY));
+      if (location !== "board") dispatch(setDisplacedPlayerTile(position));
+      dispatch(selectTile(id));
+      if (blankLetter) dispatch(clearBlankChoice(id));
+      e.stopPropagation();
+    }
   }
 
   function handleMouseUp(e) {
@@ -43,7 +49,6 @@ export function Tile({ data }) {
       let playerTiles = document.querySelectorAll(".VocabblePlayerTiles .tile");
       let minDistance = Infinity;
       let closestPosition = 0;
-      let rightEdge = 0;
       for (let i = 0; i < playerTiles.length; i++) {
         let rect = playerTiles[i].getBoundingClientRect();
         let d = Math.abs(e.clientX-rect.left);
@@ -56,15 +61,12 @@ export function Tile({ data }) {
         }
       }
 
+      dispatch(setDisplacedPlayerTile(7));
       dispatch(returnTile(playerID,id,closestPosition-1));
 
     } else {
       // place tile on board
-      if (letter !== null) {
-        dispatch(placeTile(id,closestPosition));
-      } else {
-        dispatch(placeBlank(id,closestPosition));
-      }
+      dispatch(placeTile(id,closestPosition));
     }
   }
 
@@ -81,7 +83,7 @@ export function Tile({ data }) {
 
   return (
     <div
-      className={"tile"+(selected? " selected" : "")+(locked? " locked" : "")}
+      className={"tile"+(selected? " selected" : "")+(locked? " locked" : "")+(displaced? " displaced" : "")+(swapping && location !== "board" ? " swapping" : "")}
       onMouseDown={locked? null : handleMouseDown}
       onMouseUp={selected? handleMouseUp : null}
       style={tileStyles()}>

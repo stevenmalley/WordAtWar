@@ -1,24 +1,22 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { chooseLetter, selectBlanks } from './blanksSlice';
-import { placeTile } from './tileSlice';
+import { selectTiles, blankChoice } from './tileSlice';
 
 
-// Whenever a blank has a position but no letter, BlankTileChoice should be displayed to allow a letter to be chosen
+// Whenever a blank has a position on the board but no letter, BlankTileChoice should be displayed to allow a letter to be chosen
 
 export function BlankTileChoice() {
 
-  const blanks = useSelector(selectBlanks);
+  const tiles = useSelector(selectTiles);
   const dispatch = useDispatch();
 
-  const selectedBlank = blanks.find(blank => !blank.letter);
+  const blank = tiles.find(tile => tile.location === "board" && !tile.letter && !tile.blankLetter);// !blanks.find(blank => blank.id === tile.id));
   
   function handleClick(letter) {
-    dispatch(chooseLetter(selectedBlank.id,letter));
-    dispatch(placeTile(selectedBlank.id,selectedBlank.position));
+    dispatch(blankChoice(blank.id,letter));
   }
 
   return (
-    <div className="BlankTileChoice-modal" style={{display:selectedBlank? "block" : "none"}}>
+    <div className="BlankTileChoice-modal" style={{display:blank? "block" : "none"}}>
       <div className="BlankTileChoice-buttons">
         {
           Array(26).fill(null).map((_,i) => <button key={`BlankTileChoice-${i}`} onClick={e => handleClick(String.fromCharCode(65+i))}>

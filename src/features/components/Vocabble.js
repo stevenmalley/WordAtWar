@@ -4,7 +4,6 @@ import { selectUser, setCurrentGame } from './userSlice';
 import { selectGame } from './gameSlice';
 import { selectBoard } from './boardSlice';
 import { selectTiles } from './tileSlice';
-import { selectBlanks } from './blanksSlice';
 import { BoardSpace } from './BoardSpace';
 import { PlayerTiles } from './PlayerTiles';
 import { BlankTileChoice } from './BlankTileChoice';
@@ -18,7 +17,6 @@ export function Vocabble() {
   const game = useSelector(selectGame);
   const board = useSelector(selectBoard);
   const tiles = useSelector(selectTiles);
-  const blanks = useSelector(selectBlanks);
   const dispatch = useDispatch();
 
 
@@ -28,8 +26,7 @@ export function Vocabble() {
     async function fetchLatestGame() {
       const response = await fetch(`http://localhost/vocabble/php/findLatestGame.php`);
       const json = await response.json();
-      //dispatch(setCurrentGame(json.gameID));
-      dispatch(setCurrentGame(60));
+      dispatch(setCurrentGame(json.gameID));
     }
     fetchLatestGame();
   },[]);
@@ -40,7 +37,6 @@ export function Vocabble() {
     if (currentGameID) {
       async function fetchGame() {
         const response = await fetch(`http://localhost/vocabble/php/getGameData.php?gameID=${currentGameID}&playerID=${playerID}`);
-        
         const gameData = await response.json();
         loadGameData(dispatch,gameData);
       }
