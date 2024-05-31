@@ -15,13 +15,16 @@ export const gameSlice = createSlice({
     player1name: null,
     player2name: null,
     bag: null, // how many tiles are in the bag
-    swapping: false // flag indicating whether the game is in "swapping" mode allowing the active player to swap their tiles (only possible when bag > 0)
+    swapping: false, // flag indicating whether the game is in "swapping" mode, allowing the active player to swap their tiles (only possible when bag > 0)
+    quizzing: false, // flag indicating whether the game is in "quizzing" mode, where a player must find the correct definitions of the words they just submitted
+    placementScore: null, // amount that would be scored by tiles that have been placed on the board but not yet submitted
   },
   
   reducers: {
     loadGame:(game,action) => action.payload,
     setSwapping:(game,action) => {game.swapping = action.payload},
-    switchPlayer:(game,action) => {game.activePlayer = action.payload}
+    switchPlayer:(game,action) => {game.activePlayer = action.payload},
+    setPlacementScore:(game,action) => {game.placementScore = action.payload}
     // getBoard:(board,action) => action.payload,
     // loadBoard:(board,action) => action.payload,
     // placeTile:(board,action) => {
@@ -71,5 +74,11 @@ export const setSwapping = (swap) => {
 export const switchPlayer = (activePlayer) => {
   return (dispatch, getState) => {
     dispatch({type: 'game/switchPlayer', payload: activePlayer});
+  }
+};
+
+export const setPlacementScore = (placementScore) => {
+  return (dispatch, getState) => {
+    dispatch({type: 'game/setPlacementScore', payload: placementScore});
   }
 };

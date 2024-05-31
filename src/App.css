@@ -8,6 +8,15 @@
 
 .App {
   text-align: center;
+  position: relative;
+  user-select: none;
+}
+
+.SelectedTileOverlay {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  z-index: 200;
 }
 
 .Wrapper {
@@ -22,11 +31,6 @@
   align-items: center;
   justify-content: start;
   font-size: calc(10px + 2vmin);
-}
-
-.App {
-  position: relative;
-  user-select: none;
 }
 
 .User {
@@ -102,6 +106,7 @@
   border: 1px solid darkgrey;
   margin: 1px;
   cursor: pointer;
+  position: relative;
 }
 
 .boardSpace.board-centre {
@@ -122,6 +127,18 @@
 
 .boardSpace.doubleLetter {
   background-color: skyblue;
+}
+
+.boardSpace .placementScore {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  background-color: yellow;
+  border: 2px solid brown;
+  z-index: 50;
+  font-size: 12px;
+  padding: 1px 5px;
+  border-radius: 25%;
 }
 
 

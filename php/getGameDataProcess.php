@@ -4,7 +4,7 @@ include_once("boardData.php");
 
 /* GAME DATA */
 
-$query = $conn->prepare("SELECT mode, width, player1, player2, player1score, player2score, activePlayer FROM game WHERE game.id = ?");
+$query = $conn->prepare("SELECT mode, width, player1, player2, player1score, player2score, activePlayer, player1passed, player2passed, complete FROM game WHERE game.id = ?");
 $query->bind_param("i", $gameID);
 $query->execute();
 $result = $query->get_result();

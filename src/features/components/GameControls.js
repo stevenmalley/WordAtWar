@@ -20,7 +20,7 @@ export function GameControls() {
   
   async function submit() {
     if (game.swapping && swappedTiles.length > 0 && game.bag > 0) {
-      dispatch(setSwapping(false));
+      toggleSwap();
       const response = await fetch('http://localhost/vocabble/php/submitSwap.php',
         {method: "POST",
         headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
@@ -39,9 +39,20 @@ export function GameControls() {
           blanks:placedBlanks.map(blank => [blank.id,blank.blankLetter])})});
       //console.log(response.text());
       const gameData = await response.json();
+      console.log(gameData);
       if (gameData.status?.name === "failure") alert(gameData.status.message);
       else loadGameData(dispatch,gameData,false);
     }
+  }
+
+  async function pass() {
+    const response = await fetch('http://localhost/vocabble/php/submitPass.php',
+        {method: "POST",
+        headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
+        body: JSON.stringify({playerID, gameID:currentGameID})});
+      const gameData = await response.json();
+      if (gameData.status?.name === "failure") alert(gameData.status.message);
+      else loadGameData(dispatch,gameData,false);
   }
 
   async function newGame() {
@@ -54,6 +65,21 @@ export function GameControls() {
     const gameData = await response.json();
     loadGameData(dispatch,gameData);
   }
+  async function newShortGame() {
+      await fetch(`http://localhost/vocabble/php/deleteGame.php?gameID=${currentGameID}`);
+      dispatch(setUser({...user, currentGameID: currentGameID+1}));
+
+      await fetch(`http://localhost/vocabble/php/setupGame.php?player1ID=1&player2ID=2&gameMode=feud`);
+
+      await fetch(`http://localhost/vocabble/php/deleteBagTilesTESTING.php?gameID=${currentGameID+1}`);
+
+      const response = await fetch(`http://localhost/vocabble/php/getGameData.php?gameID=${currentGameID+1}&playerID=${playerID}`);
+      const gameData = await response.json();
+      loadGameData(dispatch,gameData);
+
+    }
+
+  
 
   function switchUser() {
     let newPlayerID, newUsername;
@@ -74,13 +100,17 @@ export function GameControls() {
 
   return (
     <div className="GameControls">
+      <button onClick={pass}>PASS</button>
       <button onClick={toggleSwap} disabled={game.bag===0}>{game.swapping? "CANCEL SWAP" : "SWAP TILES"}</button>
       <button onClick={() => dispatch(returnAllTiles(playerID))}>RETURN</button>
       <button onClick={submit}>SUBMIT</button>
+      <br />
+      <br />
       <button onClick={switchUser}>SWITCH USER</button>
       <br />
       <br />
       <button onClick={newGame}>DELETE AND CREATE NEW GAME</button>
+      <button onClick={newShortGame}>SHORT GAME</button>
     </div>
   );
 }

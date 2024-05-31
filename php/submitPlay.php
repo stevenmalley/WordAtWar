@@ -3,6 +3,7 @@
 include("config.php");
 include("checkWord.php");
 include("boardData.php");
+include("getDefinition.php");
 
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: *");
@@ -37,10 +38,11 @@ $blanks = $post['blanks']; // [ [tileID,letter], ... ]
 // $playerID = $_POST['playerID'];
 // $gameID = $_POST['gameID'];
 // $tiles = $_POST['tiles']; // [ [tileID,position], ... ]
+// $blanks = $_POST['blanks']; // [ [tileID,letter], ... ]
 
 
 
-$gameData = mysqli_fetch_assoc($conn->query("SELECT mode, width, player1, player2, activePlayer, complete FROM game WHERE id = $gameID"));
+$gameData = mysqli_fetch_assoc($conn->query("SELECT mode, width, player1, player2, activePlayer, player1passed, player2passed, complete FROM game WHERE id = $gameID"));
 $activePlayer = $gameData["activePlayer"];
 $activePlayerID = $gameData["player$activePlayer"];
 
@@ -158,7 +160,7 @@ foreach($submittedTiles as &$tile) { // PASS BY REFERENCE to add 'blankLetter' p
 }
 unset($tile); // $tile must be unset after being used to pass by reference
 
-// all tiles are in a single line
+// check that all tiles are in a single line
 $horizontal = true;
 $coordinate; $minCoord; $maxCoord;
 $rowsUsed = [];
@@ -183,7 +185,7 @@ if (sizeof($rowsUsed) == 1) {
   $maxCoord = max($rowsUsed);
 }
 
-// tiles have no gaps not filled by previously-placed tiles
+// check that tiles have no gaps, unless they are filled by previously-placed tiles
 for ($c = $minCoord; $c <= $maxCoord; $c++) {
   $tileFound = false;
   foreach($submittedTiles as $tile) {
@@ -194,10 +196,8 @@ for ($c = $minCoord; $c <= $maxCoord; $c++) {
   }
   if (!$tileFound) {
     foreach($boardTiles as $tile) {
-      $row = floor(($tile['position']-1)/$gameData['width']);
-      $col = ($tile['position']-1)%$gameData['width'];
-      if (($horizontal && $col == $c && $row == $coordinate) ||
-          (!$horizontal && $row == $c && $col == $coordinate)) {
+      if (($horizontal && $tile['col'] == $c && $tile['row'] == $coordinate) ||
+          (!$horizontal && $tile['row'] == $c && $tile['col'] == $coordinate)) {
         $tileFound = true;
         break;
       }
@@ -236,7 +236,7 @@ if (sizeof($boardTiles) == 0) {
 
 
 
-// all words must be valid
+// identify words
 $submittedWords = [];
 
 $dimension = $horizontal? 'col' : 'row'; // move along 'col' coordinate to find a horizontal word
@@ -284,6 +284,18 @@ foreach($submittedTiles as $tile) {
   if ($perpendicularSearch) $submittedWords[] = $perpendicularSearch;
 }
 
+
+
+// when one tile has been placed and two words created (there can only be either one or two), the primary word (first in $submittedWords) should be the longest
+if (sizeof($tiles) == 1 && sizeof($submittedWords) == 2) {
+  if (strlen($submittedWords[1]['word']) > strlen($submittedWords[0]['word'])) {
+    $submittedWords = [$submittedWords[1],$submittedWords[0]];
+  }
+}
+
+
+
+// all words must be valid
 $invalidWords = [];
 foreach($submittedWords as $word) {
   if (!checkWord($word['word'])) $invalidWords[] = $word['word'];
@@ -355,7 +367,6 @@ switch ($gameData["mode"]) {
   case "custom" : break; // TODO fetch bonuses from database
 }
 
-$totalScore = 0;
 $scoreOutput = [
   'total' => 0,
   'items' => []
@@ -399,28 +410,13 @@ $conn->query("UPDATE game SET player{$activePlayer}score = player{$activePlayer}
 
 
 
-// check for end of game (player's tile supply is empty)
-$query = $conn->prepare("SELECT COUNT(id) FROM tile WHERE gameID = ? AND location = ?");
-$query->bind_param("ii", $gameID, $playerID);
-$query->execute();
-$tileQuery = $query->get_result();
-if (mysqli_fetch_assoc($tileQuery)['COUNT(id)'] == 0) {
-  $conn->query("UPDATE game SET complete = TRUE WHERE id = $gameID");
-  
-  // TODO
-  // deduct points for left over tiles?
-
-
+$quizWords = [];
+foreach($submittedWords as $word) {
+  $quizWords[] = $word['word'];
 }
 
+$conn->query("UPDATE game SET quizWords = '".implode(" ",$quizWords)."' WHERE id = $gameID");
 
-/* SWITCH ACTIVE PLAYER OR END GAME */
-
-// TODO end game
-
-$nextPlayer = $activePlayer == 1 ? 2 : 1;
-
-$conn->query("UPDATE game SET activePlayer = $nextPlayer WHERE id = $gameID");
 
 
 

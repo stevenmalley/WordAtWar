@@ -9,6 +9,7 @@ import { PlayerTiles } from './PlayerTiles';
 import { BlankTileChoice } from './BlankTileChoice';
 import { GameControls } from './GameControls';
 import { loadGameData } from './utils';
+import { calculateScore } from './scoring';
 
 
 
@@ -18,6 +19,9 @@ export function Vocabble() {
   const board = useSelector(selectBoard);
   const tiles = useSelector(selectTiles);
   const dispatch = useDispatch();
+
+
+  const placementScore = calculateScore(board,tiles);
 
 
 
@@ -63,7 +67,8 @@ export function Vocabble() {
                 {
                   boardRow.map((boardSquare,c) => {
                     const tile = tiles.find(tile => tile.location === "board" && Math.floor((tile.position-1)/15) === r && (tile.position-1)%15 === c);
-                    return <BoardSpace key={`boardSquare${r}-${c}`} data={boardSquare} tile={tile} boardWidth={game.width} />
+                    const score = (!placementScore.error && placementScore.coord.row === r && placementScore.coord.col === c) ? placementScore.score : null;
+                    return <BoardSpace key={`boardSquare${r}-${c}`} data={boardSquare} tile={tile} boardWidth={game.width} score={score} />
                   })
                 }
               </div>

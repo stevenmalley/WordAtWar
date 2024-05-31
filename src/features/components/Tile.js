@@ -1,22 +1,21 @@
 import { selectUser } from './userSlice';
 import { selectGame } from './gameSlice';
 import { selectTile, placeTile, returnTile, clearBlankChoice, toggleSwap } from './tileSlice';
-import { selectMouse, setMouseCoords, setDisplacedPlayerTile } from './mouseSlice';
+import { setMouseCoords, setDisplacedPlayerTile } from './mouseSlice';
 import { useSelector, useDispatch } from 'react-redux';
 
-export function Tile({ data, displaced = false }) {
+export function Tile({ data, displaced = false, mouseCoords = null }) {
 
   const { playerID } = useSelector(selectUser);
   const { swapping:swapMode } = useSelector(selectGame);
   const dispatch = useDispatch();
   const { letter, score, id, selected, locked, blankLetter, location, position, swapping } = data;
-  const { coords : mouseCoords } = useSelector(selectMouse);
 
   function handleMouseDown(e) {
     if (swapMode) {
       dispatch(toggleSwap(id));
     } else {
-      dispatch(setMouseCoords(e.pageX,e.pageY));
+      dispatch(setMouseCoords(e.clientX,e.clientY));
       if (location !== "board") dispatch(setDisplacedPlayerTile(position));
       dispatch(selectTile(id));
       if (blankLetter) dispatch(clearBlankChoice(id));
@@ -25,26 +24,10 @@ export function Tile({ data, displaced = false }) {
   }
 
   function handleMouseUp(e) {
-    let boardSpaces = document.querySelectorAll(".boardSpace");
     let minDistance = Infinity;
     let closestPosition = 0;
-    let maxY = 0;
-    for (let i = 0; i < boardSpaces.length; i++) {
-      if (!boardSpaces[i].querySelector(".tile")) {
-        let rect = boardSpaces[i].getBoundingClientRect();
-        let dx = e.clientX-(rect.right+rect.left)/2;
-        let dy = e.clientY-(rect.top+rect.bottom)/2;
-        let d = Math.sqrt((dx*dx)+(dy*dy));
-        if (d < minDistance) {
-            minDistance = d;
-            closestPosition = i+1;
-        }
-        if (rect.bottom > maxY) maxY = rect.bottom;
-      }
-    }
-    let playerTilesY = document.querySelector('.VocabblePlayerTiles').getBoundingClientRect().top;
 
-    if (Math.abs(e.clientY-playerTilesY) < Math.abs(e.clientY-maxY)) {
+    if (e.clientY > document.querySelector('.VocabblePlayerTiles').getBoundingClientRect().top) {
       // place tile in Player Tiles
       let playerTiles = document.querySelectorAll(".VocabblePlayerTiles .tile");
       let minDistance = Infinity;
@@ -60,12 +43,25 @@ export function Tile({ data, displaced = false }) {
           closestPosition = i+1;
         }
       }
-
       dispatch(setDisplacedPlayerTile(7));
       dispatch(returnTile(playerID,id,closestPosition-1));
 
     } else {
       // place tile on board
+
+      let boardSpaces = document.querySelectorAll(".boardSpace");
+      for (let i = 0; i < boardSpaces.length; i++) {
+        if (!boardSpaces[i].querySelector(".tile")) {
+          let rect = boardSpaces[i].getBoundingClientRect();
+          let dx = e.clientX-(rect.right+rect.left)/2;
+          let dy = e.clientY-(rect.top+rect.bottom)/2;
+          let d = Math.sqrt((dx*dx)+(dy*dy));
+          if (d < minDistance) {
+              minDistance = d;
+              closestPosition = i+1;
+          }
+        }
+      }
       dispatch(placeTile(id,closestPosition));
     }
   }

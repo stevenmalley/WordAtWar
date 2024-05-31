@@ -10,7 +10,7 @@ export function PlayerTiles() {
   const { playerID } = useSelector(selectUser);
   const { displacement } = useSelector(selectMouse);
   const tiles = useSelector(selectTiles);
-  const playerTiles = tiles.filter(tile => tile.location === playerID).sort((a,b) => a.position - b.position);
+  const playerTiles = tiles.filter(tile => tile.location === playerID).sort((a,b) => a.position - b.position); // excludes selected tile (location == "selected")
 
   return (
     <div className="VocabblePlayerTiles">

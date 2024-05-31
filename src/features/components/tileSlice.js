@@ -12,7 +12,7 @@ import { createSlice } from '@reduxjs/toolkit';
  *   location: "board" | "player",
  *   position: {row,col} | <int>, // {row,col} if location is "board", <int> indicating order in the display if location is "player"
  *   selected: <bool>,
- *   blankLetter: <char> | null // if 'letter' is null, this property receives the letter chosen for the blank to act as
+ *   blankLetter: <char> | null, // if 'letter' is null, this property receives the letter chosen for the blank to act as
  * }
  * 
  */

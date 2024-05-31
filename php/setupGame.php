@@ -187,10 +187,6 @@ $query->execute();
 
 
 
-// include('getGameDataProcess.php');
-
-
-
 
 $output['gameID'] = $gameID;
 $output['message'] = "New game created successfully";

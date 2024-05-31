@@ -37,7 +37,7 @@ $tiles = $post['tiles']; // [ tileID, ... ]
 
 
 
-$gameData = mysqli_fetch_assoc($conn->query("SELECT player1, player2, activePlayer, complete FROM game WHERE id = $gameID"));
+$gameData = mysqli_fetch_assoc($conn->query("SELECT player1, player2, activePlayer, player1passed, player2passed, complete FROM game WHERE id = $gameID"));
 $activePlayer = $gameData["activePlayer"];
 $activePlayerID = $gameData["player$activePlayer"];
 
