@@ -30,7 +30,7 @@ function getDefinition($word) {
   }
 }
 
-function getDefinitionQuiz($word) {
+function getDefinitionQuiz($word,$gameID) {
   global $hashSalt;
 
   $word = strtoupper($word);
@@ -70,7 +70,8 @@ function getDefinitionQuiz($word) {
     array_splice($definitionsQuiz, $correctIndex, 0, $correctDefinition);
 
 
-    return ["word" => $word, "quiz" => $definitionsQuiz, "hash" => hash("sha256",$correctDefinition.$hashSalt)];
+    return ["word" => $word, "quiz" => $definitionsQuiz, "hash" => hash("sha256",$correctDefinition.$hashSalt.$gameID)];
+    // use a salt so it cannot be reproduced, and the gameID so each definition has a different hash in different games
   } else {
     return false;
   }

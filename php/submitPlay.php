@@ -410,12 +410,13 @@ $conn->query("UPDATE game SET player{$activePlayer}score = player{$activePlayer}
 
 
 
-$quizWords = [];
+
+$quizzes = [];
 foreach($submittedWords as $word) {
-  $quizWords[] = $word['word'];
+  $quizzes[] = getDefinitionQuiz($word['word'],$gameID);
 }
 
-$conn->query("UPDATE game SET quizWords = '".implode(" ",$quizWords)."' WHERE id = $gameID");
+$conn->query("UPDATE game SET quizzes = '".json_encode($quizzes)."' WHERE id = $gameID");
 
 
 
