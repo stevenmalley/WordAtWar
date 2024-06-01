@@ -13,7 +13,7 @@ import { calculateScore } from './scoring';
 
 
 
-export function Vocabble() {
+export function WordAtWar() {
   const { name : username, playerID, currentGameID } = useSelector(selectUser);
   const game = useSelector(selectGame);
   const board = useSelector(selectBoard);
@@ -28,7 +28,7 @@ export function Vocabble() {
   /** TESTING */
   useEffect(() => {
     async function fetchLatestGame() {
-      const response = await fetch(`http://localhost/vocabble/php/findLatestGame.php`);
+      const response = await fetch(`http://localhost/WordAtWar/php/findLatestGame.php`);
       const json = await response.json();
       dispatch(setCurrentGame(json.gameID));
     }
@@ -40,7 +40,7 @@ export function Vocabble() {
   useEffect(() => {
     if (currentGameID) {
       async function fetchGame() {
-        const response = await fetch(`http://localhost/vocabble/php/getGameData.php?gameID=${currentGameID}&playerID=${playerID}`);
+        const response = await fetch(`http://localhost/WordAtWar/php/getGameData.php?gameID=${currentGameID}&playerID=${playerID}`);
         const gameData = await response.json();
         loadGameData(dispatch,gameData);
       }
@@ -51,7 +51,7 @@ export function Vocabble() {
   
 
   return (
-    <div className={"Vocabble"+(game["player"+game.activePlayer] === playerID ? " activePlayer" : "")}>
+    <div className={"WordAtWar"+(game["player"+game.activePlayer] === playerID ? " activePlayer" : "")}>
       <div className="Wrapper">
         <div className="User">{username}</div>
         <h1>Word at War</h1>
@@ -59,7 +59,7 @@ export function Vocabble() {
           <span className={game.activePlayer === 1 ? "activePlayer" : ""}>{game.player1name} &ndash; {game.player1score}</span>
           <span className={game.activePlayer === 2 ? "activePlayer" : ""}>{game.player2name} &ndash; {game.player2score}</span>
         </div>
-        <div className="VocabbleBoard">
+        <div className="WordAtWarBoard">
           <BlankTileChoice />
           {
             board.map((boardRow,r) =>

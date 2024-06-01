@@ -15,9 +15,9 @@ export function SelectedTileOverlay() {
   function mousemoveHandler(e) {
     dispatch(setMouseCoords(e.clientX,e.clientY));
 
-    if (e.clientY > document.querySelector('.VocabblePlayerTiles').getBoundingClientRect().top) {
+    if (e.clientY > document.querySelector('.WordAtWarPlayerTiles').getBoundingClientRect().top) {
       // place tile in Player Tiles
-      let playerTiles = document.querySelectorAll(".VocabblePlayerTiles .tile");
+      let playerTiles = document.querySelectorAll(".WordAtWarPlayerTiles .tile");
       let minDistance = Infinity;
       let closestPosition = 0;
       for (let i = 0; i < playerTiles.length; i++) {

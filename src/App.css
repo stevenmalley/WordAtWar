@@ -24,7 +24,7 @@
   max-width: 600px; 
 }
 
-.Vocabble {
+.WordAtWar {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -39,7 +39,7 @@
   text-align: left;
 }
 
-.Vocabble h1 {
+.WordAtWar h1 {
   margin: 10px;
 }
 
@@ -58,7 +58,7 @@
   background-color: grey;/* #040; */
 }
 
-.Vocabble.activePlayer .GameInfo span.activePlayer {
+.WordAtWar.activePlayer .GameInfo span.activePlayer {
   background-color: green;
 }
 
@@ -89,11 +89,11 @@
   width: 30px;
 }
 
-.Vocabble .VocabbleBoard {
+.WordAtWar .WordAtWarBoard {
   border: 1vw solid grey;
 }
 
-.Vocabble.activePlayer .VocabbleBoard {
+.WordAtWar.activePlayer .WordAtWarBoard {
   border-color: green;
 }
 
@@ -182,7 +182,7 @@
   background-color: red;
 }
 
-.VocabblePlayerTiles {
+.WordAtWarPlayerTiles {
   display: flex;
   margin-top: 30px;
   padding: 10px;
@@ -190,7 +190,7 @@
   border: 3px solid rgb(255, 240, 207);
 }
 
-.VocabblePlayerTiles:hover {
+.WordAtWarPlayerTiles:hover {
   border-color: orange;
 }
 

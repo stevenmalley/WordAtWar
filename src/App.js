@@ -1,5 +1,5 @@
 import React from 'react';
-import { Vocabble } from './features/components/Vocabble';
+import { WordAtWar } from './features/components/WordAtWar';
 import { SelectedTileOverlay } from './features/components/SelectedTileOverlay';
 import './App.css';
 
@@ -9,7 +9,7 @@ function App() {
   return (
     <div className="App">
       <SelectedTileOverlay />
-      <Vocabble />
+      <WordAtWar />
     </div>
   );
 }

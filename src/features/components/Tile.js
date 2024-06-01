@@ -27,9 +27,9 @@ export function Tile({ data, displaced = false, mouseCoords = null }) {
     let minDistance = Infinity;
     let closestPosition = 0;
 
-    if (e.clientY > document.querySelector('.VocabblePlayerTiles').getBoundingClientRect().top) {
+    if (e.clientY > document.querySelector('.WordAtWarPlayerTiles').getBoundingClientRect().top) {
       // place tile in Player Tiles
-      let playerTiles = document.querySelectorAll(".VocabblePlayerTiles .tile");
+      let playerTiles = document.querySelectorAll(".WordAtWarPlayerTiles .tile");
       let minDistance = Infinity;
       let closestPosition = 0;
       for (let i = 0; i < playerTiles.length; i++) {

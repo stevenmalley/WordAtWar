@@ -21,7 +21,7 @@ export function GameControls() {
   async function submit() {
     if (game.swapping && swappedTiles.length > 0 && game.bag > 0) {
       toggleSwap();
-      const response = await fetch('http://localhost/vocabble/php/submitSwap.php',
+      const response = await fetch('http://localhost/WordAtWar/php/submitSwap.php',
         {method: "POST",
         headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
         body: JSON.stringify({playerID, gameID:currentGameID,
@@ -31,7 +31,7 @@ export function GameControls() {
       else loadSwapData(dispatch,swapData,playerID);
 
     } else if (placedTiles.length > 0) {
-      const response = await fetch('http://localhost/vocabble/php/submitPlay.php',
+      const response = await fetch('http://localhost/WordAtWar/php/submitPlay.php',
         {method: "POST",
         headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
         body: JSON.stringify({playerID, gameID:currentGameID,
@@ -46,7 +46,7 @@ export function GameControls() {
   }
 
   async function pass() {
-    const response = await fetch('http://localhost/vocabble/php/submitPass.php',
+    const response = await fetch('http://localhost/WordAtWar/php/submitPass.php',
         {method: "POST",
         headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
         body: JSON.stringify({playerID, gameID:currentGameID})});
@@ -56,24 +56,24 @@ export function GameControls() {
   }
 
   async function newGame() {
-    await fetch(`http://localhost/vocabble/php/deleteGame.php?gameID=${currentGameID}`);
+    await fetch(`http://localhost/WordAtWar/php/deleteGame.php?gameID=${currentGameID}`);
     dispatch(setUser({...user, currentGameID: currentGameID+1}));
 
-    await fetch(`http://localhost/vocabble/php/setupGame.php?player1ID=1&player2ID=2&gameMode=feud`);
+    await fetch(`http://localhost/WordAtWar/php/setupGame.php?player1ID=1&player2ID=2&gameMode=feud`);
 
-    const response = await fetch(`http://localhost/vocabble/php/getGameData.php?gameID=${currentGameID+1}&playerID=${playerID}`);
+    const response = await fetch(`http://localhost/WordAtWar/php/getGameData.php?gameID=${currentGameID+1}&playerID=${playerID}`);
     const gameData = await response.json();
     loadGameData(dispatch,gameData);
   }
   async function newShortGame() {
-      await fetch(`http://localhost/vocabble/php/deleteGame.php?gameID=${currentGameID}`);
+      await fetch(`http://localhost/WordAtWar/php/deleteGame.php?gameID=${currentGameID}`);
       dispatch(setUser({...user, currentGameID: currentGameID+1}));
 
-      await fetch(`http://localhost/vocabble/php/setupGame.php?player1ID=1&player2ID=2&gameMode=feud`);
+      await fetch(`http://localhost/WordAtWar/php/setupGame.php?player1ID=1&player2ID=2&gameMode=feud`);
 
-      await fetch(`http://localhost/vocabble/php/deleteBagTilesTESTING.php?gameID=${currentGameID+1}`);
+      await fetch(`http://localhost/WordAtWar/php/deleteBagTilesTESTING.php?gameID=${currentGameID+1}`);
 
-      const response = await fetch(`http://localhost/vocabble/php/getGameData.php?gameID=${currentGameID+1}&playerID=${playerID}`);
+      const response = await fetch(`http://localhost/WordAtWar/php/getGameData.php?gameID=${currentGameID+1}&playerID=${playerID}`);
       const gameData = await response.json();
       loadGameData(dispatch,gameData);
 
