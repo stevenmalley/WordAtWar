@@ -3,7 +3,7 @@
 }
 
 :root {
-  --tileSize: min(6.5vw, 35px);
+  --tileSize: min(6.2vw, 38px);
 }
 
 .App {
@@ -89,8 +89,97 @@
   width: 30px;
 }
 
+
+
+.QuizChoice-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 100;
+}
+
+.QuizChoice-form {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  height: 80%;
+  z-index: 101;
+  background: white;
+  padding: 20px;
+  border: 5px solid gold;
+  font-size: 20px;
+  text-align: left;
+}
+
+.QuizChoice-form input[type="radio"] {
+  margin-right: 12px;
+}
+
+
+
+.ScoreDisplay-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 100;
+}
+
+.ScoreDisplay {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  height: 80%;
+  z-index: 101;
+  background: white;
+  padding: 20px;
+  border: 5px solid gold;
+  font-size: 20px;
+  text-align: left;
+}
+
+.quiz {
+  margin: 15px 0;
+}
+
+.quizReward, .quizResult {
+  padding: 0px 15px;
+  font-weight: bold;
+  font-family: Arial;
+}
+
+.quizReward.correct, .quizResult.correct {
+  color: green;
+}
+
+.quizReward.incorrect, .quizResult.incorrect {
+  color: red;
+}
+
+.quizReward.incorrect {
+  text-decoration: line-through;
+}
+
+.quizOption.correct {
+  color: green;
+  font-weight: bold;
+}
+
+.quizOption.incorrect {
+  color: red;
+}
+
+
+
 .WordAtWar .WordAtWarBoard {
-  border: 1vw solid grey;
+  /* border: 1vw solid grey; */
 }
 
 .WordAtWar.activePlayer .WordAtWarBoard {
@@ -103,8 +192,10 @@
 
 .boardSpace {
   box-sizing: content-box; /* spaces and tiles can share a size, with tiles being border-box */
+  width: var(--tileSize);
+  height: var(--tileSize);
   border: 1px solid darkgrey;
-  margin: 1px;
+  /* margin: 1px; */
   cursor: pointer;
   position: relative;
 }
@@ -155,15 +246,17 @@
 }
 
 .tile-letter {
-  font-size: 23px;
+  font-size: calc(0.7*var(--tileSize));
+  line-height: var(--tileSize);
   position: relative;
+  top: 1px;
 }
 
 .tile-score {
-  font-size: 10px;
+  font-size: calc(0.3*var(--tileSize));
   position: absolute;
-  right: 3px;
-  top: 0;
+  right: 2px;
+  top: -2px;
 }
 
 .tile.selected {
@@ -202,4 +295,10 @@
 .BagCount {
   font-size: 20px;
   float: right;
+}
+
+
+
+.GameControls button {
+  margin: 0px 5px;
 }

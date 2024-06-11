@@ -48,7 +48,6 @@ export function Tile({ data, displaced = false, mouseCoords = null }) {
 
     } else {
       // place tile on board
-
       let boardSpaces = document.querySelectorAll(".boardSpace");
       for (let i = 0; i < boardSpaces.length; i++) {
         if (!boardSpaces[i].querySelector(".tile")) {
@@ -63,6 +62,7 @@ export function Tile({ data, displaced = false, mouseCoords = null }) {
         }
       }
       dispatch(placeTile(id,closestPosition));
+
     }
   }
 
@@ -79,7 +79,7 @@ export function Tile({ data, displaced = false, mouseCoords = null }) {
 
   return (
     <div
-      className={"tile"+(selected? " selected" : "")+(locked? " locked" : "")+(displaced? " displaced" : "")+(swapping && location !== "board" ? " swapping" : "")}
+      className={"tile"+(selected? " selected" : "")+(locked? " locked" : "")+(displaced? " displaced" : "")+(swapping && !locked ? " swapping" : "")}
       onMouseDown={locked? null : handleMouseDown}
       onMouseUp={selected? handleMouseUp : null}
       style={tileStyles()}>

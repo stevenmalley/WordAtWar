@@ -44,7 +44,7 @@ $blanks = $post['blanks']; // [ [tileID,letter], ... ]
 
 $gameData = mysqli_fetch_assoc($conn->query("SELECT mode, width, player1, player2, activePlayer, player1passed, player2passed, complete FROM game WHERE id = $gameID"));
 $activePlayer = $gameData["activePlayer"];
-$activePlayerID = $gameData["player$activePlayer"];
+$activePlayerID = $activePlayer > 0 ? $gameData["player$activePlayer"] : null;
 
 // collect position (including row and col) data for easier checking
 $boardTiles = [];
@@ -87,11 +87,11 @@ while ($row = mysqli_fetch_assoc($tileQuery)) {
 
 
 
-// check current player (the user making the request) is the active player (the player whose turn it is)
-if ($activePlayerID != $playerID) fail("It is not your turn");
-
 // check game is not already complete
 if ($gameData['complete']) fail("Game has finished");
+
+// check current player (the user making the request) is the active player (the player whose turn it is)
+if ($activePlayerID != $playerID) fail("It is not your turn");
 
 // at least one tile has been submitted
 if (sizeof($tiles) == 0) {
@@ -274,7 +274,7 @@ function searchTiles($pointedTile,$direction) {
   else return false;
 }
 
-// find the word on the primary axis
+// find the word on the primary axis (the word that uses all of the submitted tiles)
 $dimensionSearch = searchTiles($submittedTiles[0],$dimension);
 if ($dimensionSearch) $submittedWords[] = $dimensionSearch;
 
@@ -341,17 +341,23 @@ foreach($blanks as $blank) {
 }
 
 // give new tiles to player
-$newPosition = 0;
-while ($newPosition < 7) {
-  if ($newPosition < 7-sizeof($tiles)) {
-    // adjust a player's tile to the left
-    $conn->query("UPDATE tile SET position = $newPosition WHERE gameID = $gameID AND location = '$playerID' AND position = ( SELECT MIN(position) FROM tile WHERE gameID = $gameID AND location = '$playerID' AND position >= $newPosition )");
-  } else {
-    // move a tile from the bag to the player, if one exists in the bag
-    $conn->query("UPDATE tile SET location = '$playerID', position = $newPosition WHERE gameID = $gameID AND location = 'bag' AND position = ( SELECT MIN(position) FROM tile WHERE gameID = $gameID AND location = 'bag' )");
-  }
-  $newPosition++;
+$newTiles = sizeof($tiles);
+while ($newTiles-- > 0) {
+  $conn->query("UPDATE tile SET location = '$playerID', position = null
+    WHERE gameID = $gameID AND location = 'bag' AND
+      position = ( SELECT MIN(position) FROM tile WHERE gameID = $gameID AND location = 'bag' )");
 }
+// $newPosition = 0;
+// while ($newPosition < 7) {
+//   if ($newPosition < 7-sizeof($tiles)) {
+//     // adjust a player's tile to the left
+//     $conn->query("UPDATE tile SET position = $newPosition WHERE gameID = $gameID AND location = '$playerID' AND position = ( SELECT MIN(position) FROM tile WHERE gameID = $gameID AND location = '$playerID' AND position >= $newPosition )");
+//   } else {
+//     // move a tile from the bag to the player, if one exists in the bag
+//     $conn->query("UPDATE tile SET location = '$playerID', position = $newPosition WHERE gameID = $gameID AND location = 'bag' AND position = ( SELECT MIN(position) FROM tile WHERE gameID = $gameID AND location = 'bag' )");
+//   }
+//   $newPosition++;
+// }
 
 
 
@@ -367,7 +373,7 @@ switch ($gameData["mode"]) {
   case "custom" : break; // TODO fetch bonuses from database
 }
 
-$scoreOutput = [
+$playScore = [
   'total' => 0,
   'items' => []
 ];
@@ -394,30 +400,48 @@ foreach($submittedWords as $word) {
     $wordScore += $tile['score']*$letterMultiplier;
   }
   $wordScore *= $wordMultiplier;
-  $scoreOutput['items'][] = [$word['word'],$wordScore];
-  $scoreOutput['total'] += $wordScore;
+  $playScore['items'][] = [$word['word'],$wordScore];
+  $playScore['total'] += $wordScore;
 }
 
 if (sizeof($submittedTiles) == 7) {
-  $scoreOutput['total'] += 40;
-  $scoreOutput['items'][] = ["That's a bingo!",40];
+  $playScore['total'] += 40;
+  //$playScore['items'][] = ["That's a bingo!",40];
+  $playScore['items'][0][1] += 40; // the first word in submitted words is the primary word (the word that uses all of the submitted tiles), so add the bingo bonus here
 }
 
-$output['score'] = $scoreOutput;
+$output['score'] = $playScore;
 
-$conn->query("UPDATE game SET player{$activePlayer}score = player{$activePlayer}score + {$scoreOutput['total']} WHERE id = $gameID");
-
-
-
+// score immediately for words
+// $conn->query("UPDATE game SET player{$activePlayer}score = player{$activePlayer}score + {$playScore['total']} WHERE id = $gameID");
 
 
+
+
+// for each unique word, generate a quiz
+$uniqueSubmittedWords = [];
 $quizzes = [];
 foreach($submittedWords as $word) {
-  $quizzes[] = getDefinitionQuiz($word['word'],$gameID);
+  if (!in_array($word['word'],$uniqueSubmittedWords)) {
+    $quiz = getDefinitionQuiz($word['word'],$gameID);
+    
+    $wordScore = 0;
+    foreach($playScore['items'] as $score) {
+      // the same word might have been made more than once. combine scores for each incidence of the word.
+      if ($score[0] == $word['word']) $wordScore += $score[1];
+    }
+    
+    $quiz['score'] = $wordScore;
+    $quizzes[] = $quiz;
+    $uniqueSubmittedWords[] = $word['word'];
+  }
 }
 
-$conn->query("UPDATE game SET quizzes = '".json_encode($quizzes)."' WHERE id = $gameID");
 
+$query = $conn->prepare("UPDATE game SET quizzes = ? WHERE id = ?");
+$stringifiedQuizzes = json_encode($quizzes);
+$query->bind_param("si", $stringifiedQuizzes, $gameID);
+$query->execute();
 
 
 

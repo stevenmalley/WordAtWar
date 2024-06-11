@@ -1,4 +1,9 @@
 <?php
 
-$arr = ["what", "the", "fuck"];
-echo $arr[sizeof($arr)-1][-1];
+
+
+print_r(explode("|","blurgh"));
+echo "<br>";
+echo sizeof(explode("|","blurgh"));
+echo "<br>";
+echo strlen(explode("|","")[0]);

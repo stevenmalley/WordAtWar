@@ -148,17 +148,24 @@ $queryString .= " ELSE position END WHERE gameID = $gameID AND id IN (".implode(
 $result = $conn->query($queryString);
 
 // give new tiles to player
-$newPosition = 0;
-while ($newPosition < 7) {
-  if ($newPosition < 7-sizeof($tiles)) {
-    // adjust a player's tile to the left
-    $conn->query("UPDATE tile SET position = $newPosition WHERE gameID = $gameID AND location = '$playerID' AND position = ( SELECT MIN(position) FROM tile WHERE gameID = $gameID AND location = '$playerID' AND position >= $newPosition )");
-  } else {
-    // move a tile from the bag to the player, if one exists in the bag
-    $conn->query("UPDATE tile SET location = '$playerID', position = $newPosition WHERE gameID = $gameID AND location = 'bag' AND position = ( SELECT MIN(position) FROM tile WHERE gameID = $gameID AND location = 'bag' )");
-  }
-  $newPosition++;
+$newTiles = sizeof($tiles);
+while ($newTiles-- > 0) {
+  $conn->query("UPDATE tile SET location = '$playerID', position = null
+    WHERE gameID = $gameID AND location = 'bag' AND
+      position = ( SELECT MIN(position) FROM tile WHERE gameID = $gameID AND location = 'bag' )");
 }
+
+// $newPosition = 0;
+// while ($newPosition < 7) {
+//   if ($newPosition < 7-sizeof($tiles)) {
+//     // adjust a player's tile to the left
+//     $conn->query("UPDATE tile SET position = $newPosition WHERE gameID = $gameID AND location = '$playerID' AND position = ( SELECT MIN(position) FROM tile WHERE gameID = $gameID AND location = '$playerID' AND position >= $newPosition )");
+//   } else {
+//     // move a tile from the bag to the player, if one exists in the bag
+//     $conn->query("UPDATE tile SET location = '$playerID', position = $newPosition WHERE gameID = $gameID AND location = 'bag' AND position = ( SELECT MIN(position) FROM tile WHERE gameID = $gameID AND location = 'bag' )");
+//   }
+//   $newPosition++;
+// }
 
 
 

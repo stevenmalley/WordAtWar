@@ -19,6 +19,8 @@ export function GameControls() {
 
   
   async function submit() {
+
+    // swapping tiles
     if (game.swapping && swappedTiles.length > 0 && game.bag > 0) {
       toggleSwap();
       const response = await fetch('http://localhost/WordAtWar/php/submitSwap.php',
@@ -30,6 +32,7 @@ export function GameControls() {
       if (swapData.status?.name === "failure") alert(swapData.status.message);
       else loadSwapData(dispatch,swapData,playerID);
 
+    // submitting played tiles
     } else if (placedTiles.length > 0) {
       const response = await fetch('http://localhost/WordAtWar/php/submitPlay.php',
         {method: "POST",
@@ -41,7 +44,7 @@ export function GameControls() {
       const gameData = await response.json();
       console.log(gameData);
       if (gameData.status?.name === "failure") alert(gameData.status.message);
-      else loadGameData(dispatch,gameData,false);
+      else loadGameData(dispatch,gameData,playerID,false);
     }
   }
 
@@ -52,32 +55,33 @@ export function GameControls() {
         body: JSON.stringify({playerID, gameID:currentGameID})});
       const gameData = await response.json();
       if (gameData.status?.name === "failure") alert(gameData.status.message);
-      else loadGameData(dispatch,gameData,false);
+      else loadGameData(dispatch,gameData,playerID,false);
   }
 
   async function newGame() {
     await fetch(`http://localhost/WordAtWar/php/deleteGame.php?gameID=${currentGameID}`);
     dispatch(setUser({...user, currentGameID: currentGameID+1}));
 
-    await fetch(`http://localhost/WordAtWar/php/setupGame.php?player1ID=1&player2ID=2&gameMode=feud`);
+    await fetch(`http://localhost/WordAtWar/php/setupGame.php?player1ID=13&player2ID=17&gameMode=feud`);
 
     const response = await fetch(`http://localhost/WordAtWar/php/getGameData.php?gameID=${currentGameID+1}&playerID=${playerID}`);
     const gameData = await response.json();
-    loadGameData(dispatch,gameData);
+    loadGameData(dispatch,gameData,playerID);
   }
+  
   async function newShortGame() {
-      await fetch(`http://localhost/WordAtWar/php/deleteGame.php?gameID=${currentGameID}`);
-      dispatch(setUser({...user, currentGameID: currentGameID+1}));
+    await fetch(`http://localhost/WordAtWar/php/deleteGame.php?gameID=${currentGameID}`);
+    dispatch(setUser({...user, currentGameID: currentGameID+1}));
 
-      await fetch(`http://localhost/WordAtWar/php/setupGame.php?player1ID=1&player2ID=2&gameMode=feud`);
+    await fetch(`http://localhost/WordAtWar/php/setupGame.php?player1ID=13&player2ID=17&gameMode=feud`);
 
-      await fetch(`http://localhost/WordAtWar/php/deleteBagTilesTESTING.php?gameID=${currentGameID+1}`);
+    await fetch(`http://localhost/WordAtWar/php/deleteBagTilesTESTING.php?gameID=${currentGameID+1}`);
 
-      const response = await fetch(`http://localhost/WordAtWar/php/getGameData.php?gameID=${currentGameID+1}&playerID=${playerID}`);
-      const gameData = await response.json();
-      loadGameData(dispatch,gameData);
+    const response = await fetch(`http://localhost/WordAtWar/php/getGameData.php?gameID=${currentGameID+1}&playerID=${playerID}`);
+    const gameData = await response.json();
+    loadGameData(dispatch,gameData,playerID);
 
-    }
+  }
 
   
 

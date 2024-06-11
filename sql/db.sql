@@ -15,7 +15,8 @@ CREATE TABLE game (
   activePlayer INTEGER DEFAULT 1, -- 1 or 2, referencing player1 or player2, or 0 when game is complete
   player1passed boolean DEFAULT FALSE, -- record if the previous move was a pass, (if both players' previous moves were passes, another pass will end the game)
   player2passed boolean DEFAULT FALSE,
-  quizzes TEXT, -- stringified JSON of the quiz for the most-recently submitted words, stored while the player has not yet submitted an answer
+  quizzes TEXT DEFAULT '', -- stringified JSON of the quiz for the most-recently submitted words, stored while the player has not yet submitted an answer
+  history TEXT DEFAULT '', -- stringified JSON of an array containing the sequence of submissions and their results
   complete boolean DEFAULT FALSE -- game over
 );
 

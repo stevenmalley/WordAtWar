@@ -2,8 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 
 const fakeLogin = {
-  name: "Splong",
-  playerID: 1, //3834109,
+  name: "???",
+  playerID: 0, //3834109,
   currentGameID: null
 }
 

@@ -173,7 +173,7 @@ foreach ($shuffledTiles as $tile) {
   $letter = $tile[0] ? "'$tile[0]'" : "null";
   $location = $t < 7 ? $player1ID :
               ($t < 14 ? $player2ID : "'bag'");
-  $position = $t < 14 ? $t%7 : $t-14;
+  $position = $t >= 14 ? $t : "null";
   $tileQueryArray[] = "($t,$letter,$tile[1],$location,$position,$gameID)";
 
   $t++;

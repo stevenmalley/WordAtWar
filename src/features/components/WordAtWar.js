@@ -7,6 +7,7 @@ import { selectTiles } from './tileSlice';
 import { BoardSpace } from './BoardSpace';
 import { PlayerTiles } from './PlayerTiles';
 import { BlankTileChoice } from './BlankTileChoice';
+import { QuizChoice } from './QuizChoice';
 import { GameControls } from './GameControls';
 import { loadGameData } from './utils';
 import { calculateScore } from './scoring';
@@ -20,9 +21,30 @@ export function WordAtWar() {
   const tiles = useSelector(selectTiles);
   const dispatch = useDispatch();
 
-
   const placementScore = calculateScore(board,tiles);
 
+  useEffect(() => {
+    if (tiles.length > 0) {
+      let clientTilePositions = JSON.parse(localStorage.getItem(`WordAtWar-game${game.id}-player${playerID}-clientTilePositions`));
+      if (!clientTilePositions) clientTilePositions = [];
+      tiles.filter(tile => !tile.locked).forEach(tile => {
+        let clientTile = clientTilePositions.find(ct => ct.id === tile.id);
+        if (clientTile) {
+          if (tile.location !== "selected") {
+            clientTile.location = tile.location;
+            clientTile.position = tile.position;
+            clientTile.blankLetter = tile.blankLetter;
+          } // ignore changes to selected tiles (while a tile is selected, clientTilePosition should stay as it previously was)
+        } else {
+          const { id, location, position, blankLetter } = tile;
+          clientTilePositions.push({id, location, position, blankLetter});
+        }
+      });
+
+      clientTilePositions = clientTilePositions.filter(ct => tiles.find(tile => tile.id === ct.id && !tile.locked));
+      localStorage.setItem(`WordAtWar-game${game.id}-player${playerID}-clientTilePositions`,JSON.stringify(clientTilePositions));
+    }
+  }, [tiles]);
 
 
   /** TESTING */
@@ -41,12 +63,14 @@ export function WordAtWar() {
     if (currentGameID) {
       async function fetchGame() {
         const response = await fetch(`http://localhost/WordAtWar/php/getGameData.php?gameID=${currentGameID}&playerID=${playerID}`);
+        //console.log(response.text());
         const gameData = await response.json();
-        loadGameData(dispatch,gameData);
+        loadGameData(dispatch,gameData,playerID);
       }
       fetchGame();
     }
   },[playerID,currentGameID]);
+
 
   
 
@@ -61,6 +85,7 @@ export function WordAtWar() {
         </div>
         <div className="WordAtWarBoard">
           <BlankTileChoice />
+          <QuizChoice />
           {
             board.map((boardRow,r) =>
               <div key={"boardRow"+r} className="boardRow">

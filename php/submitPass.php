@@ -51,11 +51,11 @@ $activePlayerID = $gameData["player$activePlayer"];
 
 
 
-// check current player (the user making the request) is the active player (the player whose turn it is)
-if ($activePlayerID != $playerID) fail("It is not your turn");
-
 // check game is not already complete
 if ($gameData['complete']) fail("Game has finished");
+
+// check current player (the user making the request) is the active player (the player whose turn it is)
+if ($activePlayerID != $playerID) fail("It is not your turn");
 
 
 
@@ -77,6 +77,8 @@ function fail($failureMessage) {
 }
 
 
+
+$conn->query("UPDATE game SET player{$activePlayer}passed = TRUE WHERE id = $gameID");
 
 
 

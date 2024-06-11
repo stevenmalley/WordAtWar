@@ -13,6 +13,7 @@ import { createSlice } from '@reduxjs/toolkit';
  *   position: {row,col} | <int>, // {row,col} if location is "board", <int> indicating order in the display if location is "player"
  *   selected: <bool>,
  *   blankLetter: <char> | null, // if 'letter' is null, this property receives the letter chosen for the blank to act as
+ *   swapping: <bool>, // tile marked for a swap action
  * }
  * 
  */
@@ -80,7 +81,7 @@ export const tileSlice = createSlice({
       const toggledTile = tiles.find(tile => tile.id === action.payload);
       toggledTile.swapping = !toggledTile.swapping;
     },
-    updatePlayerTiles:(tiles,action) => tiles.filter(tile => tile.location != action.payload.playerID).concat(action.payload.tiles),
+    updatePlayerTiles:(tiles,action) => tiles.filter(tile => tile.locked).concat(action.payload.tiles),
     cancelSwaps:(tiles,action) => {
       tiles.forEach(tile => tile.swapping = false);
     }

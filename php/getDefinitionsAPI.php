@@ -14,7 +14,7 @@ $post = json_decode(file_get_contents('php://input'), true);
 
 $quizzes = [];
 foreach($post['words'] as $word) {
-  $quizzes[] = getDefinitionQuiz($word);
+  $quizzes[] = getDefinitionQuiz($word,6);
 }
 
 echo json_encode($quizzes);
