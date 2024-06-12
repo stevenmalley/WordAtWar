@@ -4,6 +4,7 @@ import { selectUser, setUser } from './userSlice';
 import { selectGame, setSwapping } from './gameSlice';
 import { selectTiles, returnAllTiles, cancelSwaps } from './tileSlice';
 import { loadGameData, loadSwapData } from './utils';
+import { DashCircleDotted, ArrowDown, CheckSquareFill, Repeat } from 'react-bootstrap-icons';
 
 
 export function GameControls() {
@@ -104,10 +105,10 @@ export function GameControls() {
 
   return (
     <div className="GameControls">
-      <button onClick={pass}>PASS</button>
-      <button onClick={toggleSwap} disabled={game.bag===0}>{game.swapping? "CANCEL SWAP" : "SWAP TILES"}</button>
-      <button onClick={() => dispatch(returnAllTiles(playerID))}>RETURN</button>
-      <button onClick={submit}>SUBMIT</button>
+      <button onClick={() => dispatch(returnAllTiles(playerID))}><ArrowDown size={30} /><span className="buttonLabel">RETURN TILES</span></button>
+      <button onClick={pass}><DashCircleDotted size={30} /><span className="buttonLabel">PASS<br />&nbsp;</span></button>
+      <button onClick={toggleSwap} disabled={game.bag===0}><Repeat size={30} /><span className="buttonLabel">{game.swapping? "CANCEL SWAP" : "SWAP TILES"}</span></button>
+      <button onClick={submit}><CheckSquareFill size={30} /><span className="buttonLabel">SUBMIT<br />&nbsp;</span></button>
       <br />
       <br />
       <button onClick={switchUser}>SWITCH USER</button>

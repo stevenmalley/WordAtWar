@@ -195,7 +195,6 @@
   width: var(--tileSize);
   height: var(--tileSize);
   border: 1px solid darkgrey;
-  /* margin: 1px; */
   cursor: pointer;
   position: relative;
 }
@@ -206,18 +205,40 @@
 
 .boardSpace.tripleWord {
   background-color: red;
+  color: rgb(227, 227, 227);
 }
 
 .boardSpace.doubleWord {
   background-color: orange;
+  color: rgb(73, 73, 73);
 }
 
 .boardSpace.tripleLetter {
   background-color: darkblue;
+  color: rgb(227, 227, 227);
 }
 
 .boardSpace.doubleLetter {
   background-color: skyblue;
+  color: rgb(73, 73, 73);
+}
+
+.boardSpace .bonusSpace {
+  font-size: calc(0.25*var(--tileSize));
+  position: absolute;
+  width: var(--tileSize);
+  height: var(--tileSize);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.boardSpace .bonusSpace span {
+  font-weight: 900;
+}
+
+.boardSpace .bonusSpace .bonusSpaceMultiplier {
+  font-size: calc(0.35*var(--tileSize));
 }
 
 .boardSpace .placementScore {
@@ -226,7 +247,7 @@
   left: 30px;
   background-color: yellow;
   border: 2px solid brown;
-  z-index: 50;
+  z-index: 150;
   font-size: 12px;
   padding: 1px 5px;
   border-radius: 25%;
@@ -237,19 +258,35 @@
 
 .tile {
   border: 1px solid orange;
+  border-radius: 18%;
   width: var(--tileSize);
   height: var(--tileSize);
   position: relative;
   cursor: pointer;
-  background: rgba(255,255,255,0.6);
-  overflow: hidden;
+  background: rgb(255 203 104);
+  color: #502a00;
+  z-index: 80;
+}
+
+.tile::after {
+  display: block;
+  content: "";
+  background: rgba(255, 255, 255, 0.5);
+  width: var(--tileSize);
+  height: var(--tileSize);
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  border-radius: 0;
+  z-index: 70;
 }
 
 .tile-letter {
   font-size: calc(0.7*var(--tileSize));
-  line-height: var(--tileSize);
+  line-height: calc(0.9*var(--tileSize));
   position: relative;
   top: 1px;
+  z-index: 100;
 }
 
 .tile-score {
@@ -257,14 +294,11 @@
   position: absolute;
   right: 2px;
   top: -2px;
+  z-index: 100;
 }
 
 .tile.selected {
   background-color: gold;
-}
-
-.tile.locked {
-  background-color: rgb(255, 240, 207);
 }
 
 .tile.displaced {
@@ -277,10 +311,12 @@
 
 .WordAtWarPlayerTiles {
   display: flex;
-  margin-top: 30px;
+  margin: 30px 0;
   padding: 10px;
   border-radius: 5px;
   border: 3px solid rgb(255, 240, 207);
+  height: var(--tileSize);
+  box-sizing: content-box;
 }
 
 .WordAtWarPlayerTiles:hover {
@@ -298,7 +334,29 @@
 }
 
 
+.GameControls {
+  
+}
 
 .GameControls button {
   margin: 0px 5px;
+  width: 18vw;
+  height: 18vw;
+  max-width: 80px;
+  max-height: 80px;
+  vertical-align: bottom;
+  background-color: darkgreen;
+  border: 0;
+  border-radius: 10%;
+  color: white;
+  cursor: pointer;
+}
+
+.GameControls button:hover {
+  background-color: green;
+}
+
+.GameControls button span.buttonLabel {
+  display: block;
+  font-weight: bold;
 }

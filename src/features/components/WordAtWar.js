@@ -78,7 +78,6 @@ export function WordAtWar() {
     <div className={"WordAtWar"+(game["player"+game.activePlayer] === playerID ? " activePlayer" : "")}>
       <div className="Wrapper">
         <div className="User">{username}</div>
-        <h1>Word at War</h1>
         <div className="GameInfo">
           <span className={game.activePlayer === 1 ? "activePlayer" : ""}>{game.player1name} &ndash; {game.player1score}</span>
           <span className={game.activePlayer === 2 ? "activePlayer" : ""}>{game.player2name} &ndash; {game.player2score}</span>
@@ -93,7 +92,7 @@ export function WordAtWar() {
                   boardRow.map((boardSquare,c) => {
                     const tile = tiles.find(tile => tile.location === "board" && Math.floor((tile.position-1)/15) === r && (tile.position-1)%15 === c);
                     const score = (!placementScore.error && placementScore.coord.row === r && placementScore.coord.col === c) ? placementScore.score : null;
-                    return <BoardSpace key={`boardSquare${r}-${c}`} data={boardSquare} tile={tile} boardWidth={game.width} score={score} />
+                    return <BoardSpace key={`boardSquare${r}-${c}`} data={boardSquare} tile={tile} score={score} />
                   })
                 }
               </div>
@@ -101,7 +100,7 @@ export function WordAtWar() {
           }
         </div>
         <PlayerTiles />
-        <div className="BagCount">Tiles remaining: {game.bag}</div>
+        <div className="BagCount"><span style={{fontWeight:"bold"}}>{game.bag}</span><br />TILES<br />REMAINING</div>
         <GameControls />
       </div>
     </div>

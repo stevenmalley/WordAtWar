@@ -2,15 +2,24 @@ import { Tile } from './Tile';
 
 
 
-export function BoardSpace({ data, tile, boardWidth, score }) {
+export function BoardSpace({ data, tile, score }) {
+
+  let bonusText;
+  switch (data.bonus) {
+    case "tripleWord" : bonusText = <span>WORD<br /><span className="bonusSpaceMultiplier">&times;3</span></span>; break;
+    case "doubleWord" : bonusText = <span>WORD<br /><span className="bonusSpaceMultiplier">&times;2</span></span>; break;
+    case "tripleLetter" : bonusText = <span>LETTER<br /><span className="bonusSpaceMultiplier">&times;3</span></span>; break;
+    case "doubleLetter" : bonusText = <span>LETTER<br /><span className="bonusSpaceMultiplier">&times;2</span></span>; break;
+  }
 
   return (
-    <div className={"boardSpace"+(data.bonus? ` ${data.bonus}` : "")+(data.centre? " board-centre" : "")+(tile? " boardSpace-faded" : "")}
-      //style={{width:"calc(100%/15)",height:"calc(100%/15)"}}>
-      style={{width:"var(--tileSize)",height:"var(--tileSize)"}}>
-      {
-        tile ? <Tile data={tile} /> : null
-      }
+    <div className={"boardSpace"+(data.bonus? ` ${data.bonus}` : "")+(data.centre? " board-centre" : "")+(tile? " boardSpace-faded" : "")} >
+        {
+          data.bonus? <div className="bonusSpace">{bonusText}</div> : null
+        }
+        {
+          tile ? <Tile data={tile} /> : null
+        }
       <div className="placementScore" style={{display: score? "block" : "none"}}>{score}</div>
     </div>
   );
