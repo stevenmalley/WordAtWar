@@ -13,7 +13,7 @@ export function PlayerTiles() {
   const playerTiles = tiles.filter(tile => tile.location === playerID).sort((a,b) => a.position - b.position); // excludes selected tile (location == "selected")
 
   return (
-    <div className="WordAtWarPlayerTiles">
+    <div className="PlayerTiles">
       {
         playerTiles.map((tile,t) =>
           <div key={`playerTileHolder-${t}`} className="playerTileHolder">

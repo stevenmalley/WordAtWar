@@ -13,11 +13,14 @@ export function SelectedTileOverlay() {
   const selectedTile = tiles.find(tile => tile.selected);
 
   function mousemoveHandler(e) {
+
+    if (e.type === "touchmove") e = e.changedTouches[0];
+
     dispatch(setMouseCoords(e.clientX,e.clientY));
 
-    if (e.clientY > document.querySelector('.WordAtWarPlayerTiles').getBoundingClientRect().top) {
+    if (e.clientY > document.querySelector('.PlayerTiles').getBoundingClientRect().top) {
       // place tile in Player Tiles
-      let playerTiles = document.querySelectorAll(".WordAtWarPlayerTiles .tile");
+      let playerTiles = document.querySelectorAll(".PlayerTiles .tile");
       let minDistance = Infinity;
       let closestPosition = 0;
       for (let i = 0; i < playerTiles.length; i++) {
@@ -37,7 +40,8 @@ export function SelectedTileOverlay() {
 
   return (
     <div className="SelectedTileOverlay"
-      onMouseMove={selectedTile? e => mousemoveHandler(e) : null}
+      onMouseMove={selectedTile? mousemoveHandler : null}
+      onTouchMove={selectedTile? mousemoveHandler : null}
       style={{pointerEvents: selectedTile? "auto" : "none"}}>
       {
         selectedTile? <Tile data={selectedTile} mouseCoords={coords} /> : null

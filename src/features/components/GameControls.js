@@ -5,6 +5,7 @@ import { selectGame, setSwapping } from './gameSlice';
 import { selectTiles, returnAllTiles, cancelSwaps } from './tileSlice';
 import { loadGameData, loadSwapData } from './utils';
 import { DashCircleDotted, ArrowDown, CheckSquareFill, Repeat } from 'react-bootstrap-icons';
+import serverPath from '../../serverPath';
 
 
 export function GameControls() {
@@ -24,7 +25,7 @@ export function GameControls() {
     // swapping tiles
     if (game.swapping && swappedTiles.length > 0 && game.bag > 0) {
       toggleSwap();
-      const response = await fetch('http://localhost/WordAtWar/php/submitSwap.php',
+      const response = await fetch(serverPath+'/php/submitSwap.php',
         {method: "POST",
         headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
         body: JSON.stringify({playerID, gameID:currentGameID,
@@ -35,7 +36,7 @@ export function GameControls() {
 
     // submitting played tiles
     } else if (placedTiles.length > 0) {
-      const response = await fetch('http://localhost/WordAtWar/php/submitPlay.php',
+      const response = await fetch(serverPath+'/php/submitPlay.php',
         {method: "POST",
         headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
         body: JSON.stringify({playerID, gameID:currentGameID,
@@ -50,7 +51,7 @@ export function GameControls() {
   }
 
   async function pass() {
-    const response = await fetch('http://localhost/WordAtWar/php/submitPass.php',
+    const response = await fetch(serverPath+'/php/submitPass.php',
         {method: "POST",
         headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
         body: JSON.stringify({playerID, gameID:currentGameID})});
@@ -60,25 +61,25 @@ export function GameControls() {
   }
 
   async function newGame() {
-    await fetch(`http://localhost/WordAtWar/php/deleteGame.php?gameID=${currentGameID}`);
+    await fetch(serverPath+`/php/deleteGame.php?gameID=${currentGameID}`);
     dispatch(setUser({...user, currentGameID: currentGameID+1}));
 
-    await fetch(`http://localhost/WordAtWar/php/setupGame.php?player1ID=13&player2ID=17&gameMode=feud`);
+    await fetch(serverPath+`/php/setupGame.php?player1ID=13&player2ID=17&gameMode=feud`);
 
-    const response = await fetch(`http://localhost/WordAtWar/php/getGameData.php?gameID=${currentGameID+1}&playerID=${playerID}`);
+    const response = await fetch(serverPath+`/php/getGameData.php?gameID=${currentGameID+1}&playerID=${playerID}`);
     const gameData = await response.json();
     loadGameData(dispatch,gameData,playerID);
   }
   
   async function newShortGame() {
-    await fetch(`http://localhost/WordAtWar/php/deleteGame.php?gameID=${currentGameID}`);
+    await fetch(serverPath+`/php/deleteGame.php?gameID=${currentGameID}`);
     dispatch(setUser({...user, currentGameID: currentGameID+1}));
 
-    await fetch(`http://localhost/WordAtWar/php/setupGame.php?player1ID=13&player2ID=17&gameMode=feud`);
+    await fetch(serverPath+`/php/setupGame.php?player1ID=13&player2ID=17&gameMode=feud`);
 
-    await fetch(`http://localhost/WordAtWar/php/deleteBagTilesTESTING.php?gameID=${currentGameID+1}`);
+    await fetch(serverPath+`/php/deleteBagTilesTESTING.php?gameID=${currentGameID+1}`);
 
-    const response = await fetch(`http://localhost/WordAtWar/php/getGameData.php?gameID=${currentGameID+1}&playerID=${playerID}`);
+    const response = await fetch(serverPath+`/php/getGameData.php?gameID=${currentGameID+1}&playerID=${playerID}`);
     const gameData = await response.json();
     loadGameData(dispatch,gameData,playerID);
 

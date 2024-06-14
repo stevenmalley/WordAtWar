@@ -6,6 +6,10 @@
   --tileSize: min(6.2vw, 38px);
 }
 
+body {
+  background-color: #33333a;
+}
+
 .App {
   text-align: center;
   position: relative;
@@ -49,12 +53,12 @@
 }
 
 .GameInfo span {
+  color: white;
   border-radius: 10px 10px 0px 0px;
   padding: 8px 12px;
 }
 
 .GameInfo span.activePlayer {
-  color: white;
   background-color: grey;/* #040; */
 }
 
@@ -62,7 +66,7 @@
   background-color: green;
 }
 
-.BlankTileChoice-modal {
+.WordAtWar-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -71,82 +75,52 @@
   background-color: rgba(0,0,0,0.5);
   z-index: 100;
 }
+
+.WordAtWar-modalWindow {
+  position: absolute;
+  left: 10%;
+  width: 80%;
+  z-index: 101;
+  background: white;
+  padding: 20px;
+  border: 5px solid gold;
+  border-radius: 10px;
+  font-size: 20px;
+}
+
+
 
 .BlankTileChoice-buttons {
   position: absolute;
   top: 40%;
   height: 20%;
-  left: 10%;
-  width: 80%;
-  z-index: 101;
-  background: white;
-  padding: 20px;
-  border: 5px solid gold;
 }
 
 .BlankTileChoice-buttons button {
-  height: 30px;
-  width: 30px;
-}
-
-
-
-.QuizChoice-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  z-index: 100;
+  height: var(--tileSize);
+  width: var(--tileSize);
 }
 
 .QuizChoice-form {
   position: absolute;
   top: 10%;
-  left: 10%;
-  width: 80%;
   height: 80%;
-  z-index: 101;
-  background: white;
-  padding: 20px;
-  border: 5px solid gold;
   font-size: 20px;
   text-align: left;
+  overflow-y: scroll;
 }
 
 .QuizChoice-form input[type="radio"] {
   margin-right: 12px;
 }
 
-
-
-.ScoreDisplay-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  z-index: 100;
-}
-
-.ScoreDisplay {
-  position: absolute;
-  top: 10%;
-  left: 10%;
-  width: 80%;
-  height: 80%;
-  z-index: 101;
-  background: white;
-  padding: 20px;
-  border: 5px solid gold;
-  font-size: 20px;
-  text-align: left;
+.quizInstruction {
+  text-align: center;
+  font-weight: bold;
 }
 
 .quiz {
-  margin: 15px 0;
+  margin: 30px 0;
 }
 
 .quizReward, .quizResult {
@@ -167,19 +141,53 @@
   text-decoration: line-through;
 }
 
-.quizOption.correct {
-  color: green;
+.quizOption button {
+  font-size: 1em;
+  background-color: gold;
+  border: 1px solid grey;
+  border-radius: 5px;
+  padding: 4px;
+  margin: 5px 0;
+  text-align: left;
+}
+
+.quizOption button:not(.selectedOption):not([disabled]):hover {
+  background-color: rgb(255, 233, 107);
+}
+
+.quizOption .selectedOption {
+  box-shadow: 0 0 calc(0.2* var(--tileSize)) calc(0.15* var(--tileSize)) #6c19ca;
+}
+
+.quizOption button[disabled] {
+  color: black;
+}
+
+.quizOption.correct button {
+  background-color: green;
   font-weight: bold;
 }
 
-.quizOption.incorrect {
-  color: red;
+.quizOption.incorrect button {
+  background-color: red;
+}
+
+.QuizChoice-form .formFooter {
+  text-align: center;
+}
+
+.QuizChoice-form input[type="submit"] {
+  background: blue;
+  color: white;
+  border: 1px solid grey;
+  border-radius: 5px;
+  padding: 10px 25px;
+  font-size: large;
 }
 
 
-
-.WordAtWar .WordAtWarBoard {
-  /* border: 1vw solid grey; */
+.WordAtWar .WordAtWarBoard, .PlayerTiles {
+  background-color: white;
 }
 
 .WordAtWar.activePlayer .WordAtWarBoard {
@@ -204,17 +212,17 @@
 }
 
 .boardSpace.tripleWord {
-  background-color: red;
+  background-color: #ff3b3b;
   color: rgb(227, 227, 227);
 }
 
 .boardSpace.doubleWord {
-  background-color: orange;
+  background-color: #ffb52f;
   color: rgb(73, 73, 73);
 }
 
 .boardSpace.tripleLetter {
-  background-color: darkblue;
+  background-color: #3c3ca6;
   color: rgb(227, 227, 227);
 }
 
@@ -246,9 +254,11 @@
   top: 30px;
   left: 30px;
   background-color: yellow;
+  color: brown;
   border: 2px solid brown;
   z-index: 150;
-  font-size: 12px;
+  font-size: calc(0.35*var(--tileSize));
+  font-weight: bold;
   padding: 1px 5px;
   border-radius: 25%;
 }
@@ -257,14 +267,14 @@
 /* TILES */
 
 .tile {
-  border: 1px solid orange;
+  border: 1px solid black;
   border-radius: 18%;
   width: var(--tileSize);
   height: var(--tileSize);
   position: relative;
   cursor: pointer;
-  background: rgb(255 203 104);
-  color: #502a00;
+  background-color: rgb(237, 255, 137);
+  color: #442300;
   z-index: 80;
 }
 
@@ -279,6 +289,10 @@
   left: -1px;
   border-radius: 0;
   z-index: 70;
+}
+
+.tile.locked {
+  background: rgb(255 203 104);
 }
 
 .tile-letter {
@@ -302,14 +316,14 @@
 }
 
 .tile.displaced {
-  left: 35px;
+  left: var(--tileSize);
 }
 
 .tile.swapping {
   background-color: red;
 }
 
-.WordAtWarPlayerTiles {
+.PlayerTiles {
   display: flex;
   margin: 30px 0;
   padding: 10px;
@@ -319,7 +333,7 @@
   box-sizing: content-box;
 }
 
-.WordAtWarPlayerTiles:hover {
+.PlayerTiles:hover {
   border-color: orange;
 }
 
@@ -329,6 +343,7 @@
 }
 
 .BagCount {
+  color: white;
   font-size: 20px;
   float: right;
 }
@@ -346,7 +361,7 @@
   max-height: 80px;
   vertical-align: bottom;
   background-color: darkgreen;
-  border: 0;
+  border: 1px solid white;
   border-radius: 10%;
   color: white;
   cursor: pointer;

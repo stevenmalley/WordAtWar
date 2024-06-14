@@ -18,12 +18,12 @@ if (!$gameOutput) {
 
 
 
-$query = $conn->prepare("SELECT name FROM user WHERE user.id = ?");
+$query = $conn->prepare("SELECT name FROM users WHERE users.id = ?");
 $query->bind_param("i", $gameOutput["player1"]);
 $query->execute();
 $result = $query->get_result();
 $gameOutput["player1name"] = mysqli_fetch_assoc($result)["name"];
-$query = $conn->prepare("SELECT name FROM user WHERE user.id = ?");
+$query = $conn->prepare("SELECT name FROM users WHERE users.id = ?");
 $query->bind_param("i", $gameOutput["player2"]);
 $query->execute();
 $result = $query->get_result();

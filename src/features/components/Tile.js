@@ -12,6 +12,16 @@ export function Tile({ data, displaced = false, mouseCoords = null }) {
   const { letter, score, id, selected, locked, blankLetter, location, position, swapping } = data;
 
   function handleMouseDown(e) {
+    
+    let clientX, clientY;
+    if (e.type === "touchstart") {
+      clientX = e.changedTouches[0].clientX;
+      clientY = e.changedTouches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+
     if (swapMode) {
       dispatch(toggleSwap(id));
     } else {
@@ -27,9 +37,9 @@ export function Tile({ data, displaced = false, mouseCoords = null }) {
     let minDistance = Infinity;
     let closestPosition = 0;
 
-    if (e.clientY > document.querySelector('.WordAtWarPlayerTiles').getBoundingClientRect().top) {
+    if (e.clientY > document.querySelector('.PlayerTiles').getBoundingClientRect().top) {
       // place tile in Player Tiles
-      let playerTiles = document.querySelectorAll(".WordAtWarPlayerTiles .tile");
+      let playerTiles = document.querySelectorAll(".PlayerTiles .tile");
       let minDistance = Infinity;
       let closestPosition = 0;
       for (let i = 0; i < playerTiles.length; i++) {
@@ -81,7 +91,9 @@ export function Tile({ data, displaced = false, mouseCoords = null }) {
     <div
       className={"tile"+(selected? " selected" : "")+(locked? " locked" : "")+(displaced? " displaced" : "")+(swapping && !locked ? " swapping" : "")}
       onMouseDown={locked? null : handleMouseDown}
+      onTouchStart={locked? null : handleMouseDown}
       onMouseUp={selected? handleMouseUp : null}
+      onTouchEnd={selected? handleMouseUp : null}
       style={tileStyles()}>
       <div className="tile-letter">{letter || blankLetter}</div>
       <div className="tile-score">{score || ""}</div>

@@ -1,4 +1,4 @@
-CREATE TABLE user (
+CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   name TEXT,
   password TEXT
@@ -10,8 +10,8 @@ CREATE TABLE game (
   width INTEGER DEFAULT 15,
   player1 INTEGER REFERENCES user(id),
   player2 INTEGER REFERENCES user(id),
-  player1score INTEGER NOT NULL DEFAULT '0',
-  player2score INTEGER NOT NULL DEFAULT '0',
+  player1score INTEGER NOT NULL DEFAULT 0,
+  player2score INTEGER NOT NULL DEFAULT 0,
   activePlayer INTEGER DEFAULT 1, -- 1 or 2, referencing player1 or player2, or 0 when game is complete
   player1passed boolean DEFAULT FALSE, -- record if the previous move was a pass, (if both players' previous moves were passes, another pass will end the game)
   player2passed boolean DEFAULT FALSE,

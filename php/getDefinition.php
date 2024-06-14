@@ -164,7 +164,7 @@ function randomDefinition($letter) {
   //$lengthDistribution = [5,52,217,499,886,1321,1621,1651,1432,1116,809,552,361,228];
 
   // distribution that favours 4-7 letter words, with declining chances of other words
-  $lengthDistribution = [10,30,400,800,800,400,100,100,50,40,30,20,10,5];
+  $lengthDistribution = [80,180,400,800,800,400,70,40,30,20,10,10,10,5];
 
   if ($letter == 'V') {
     // there are no 2 letter words beginning with 'V' (all other letter and length combinations have words), so prevent selection of 2 letter words

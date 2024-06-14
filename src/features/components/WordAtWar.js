@@ -11,6 +11,7 @@ import { QuizChoice } from './QuizChoice';
 import { GameControls } from './GameControls';
 import { loadGameData } from './utils';
 import { calculateScore } from './scoring';
+import serverPath from '../../serverPath';
 
 
 
@@ -50,7 +51,7 @@ export function WordAtWar() {
   /** TESTING */
   useEffect(() => {
     async function fetchLatestGame() {
-      const response = await fetch(`http://localhost/WordAtWar/php/findLatestGame.php`);
+      const response = await fetch(serverPath+`/php/findLatestGame.php`);
       const json = await response.json();
       dispatch(setCurrentGame(json.gameID));
     }
@@ -62,7 +63,7 @@ export function WordAtWar() {
   useEffect(() => {
     if (currentGameID) {
       async function fetchGame() {
-        const response = await fetch(`http://localhost/WordAtWar/php/getGameData.php?gameID=${currentGameID}&playerID=${playerID}`);
+        const response = await fetch(serverPath+`/php/getGameData.php?gameID=${currentGameID}&playerID=${playerID}`);
         //console.log(response.text());
         const gameData = await response.json();
         loadGameData(dispatch,gameData,playerID);

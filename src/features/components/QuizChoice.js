@@ -1,16 +1,20 @@
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUser } from './userSlice';
 import { selectGame, clearQuizResults } from './gameSlice';
 import { loadGameData } from './utils';
+import serverPath from '../../serverPath';
 
 
 // Whenever game.quizzes has content, the active player should see the questions displayed
+// Whenever game.quizResults has content, the active player should see questions with answers displayed
 
 export function QuizChoice() {
 
   const { playerID, currentGameID } = useSelector(selectUser);
   const game = useSelector(selectGame);
   const dispatch = useDispatch();
+  const [ selectedOptions, setSelectedOptions ] = useState(game.quizzes? Array(game.quizzes.length).fill(-1) : []);
 
   let displayMode = "none";
   if (game["player"+game.activePlayer] === playerID && game.quizzes) {
@@ -18,7 +22,9 @@ export function QuizChoice() {
   } else if (game.quizResults) {
     displayMode = "results";
   }
-  
+
+  // reset selectedOptions when game changes so that previous selections are not preserved and applied to a quiz
+  useEffect(() => setSelectedOptions(game.quizzes? Array(game.quizzes.length).fill(-1) : []),[game]);
 
   async function submit(e) {
     e.preventDefault();
@@ -27,15 +33,13 @@ export function QuizChoice() {
 
       let validAnswers = true;
       const answers = [];
-      for (let i = 0; i < game.quizzes.length; i++) {
-        let answer = e.target[`quiz-${i}-radio`].value;
-        if (answer === '') validAnswers = false;
-        else answer = parseInt(answer);
-        answers.push({word:game.quizzes[i].word, definitionIndex:answer});
+      for (let i = 0; i < selectedOptions.length; i++) {
+        if (selectedOptions[i] > -1) answers.push({word:game.quizzes[i].word, definitionIndex:selectedOptions[i]});
+        else validAnswers = false;
       }
       
       if (validAnswers) {
-        const response = await fetch('http://localhost/WordAtWar/php/submitQuiz.php',
+        const response = await fetch(serverPath+'/php/submitQuiz.php',
           {method: "POST",
           headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
           body: JSON.stringify({playerID, gameID:currentGameID, answers})});
@@ -62,8 +66,12 @@ export function QuizChoice() {
   }
 
   return (
-    <div className="QuizChoice-modal" style={{display:displayed}}>
-      <form onSubmit={submit} className="QuizChoice-form">
+    <div className="QuizChoice-modal WordAtWar-modal" style={{display:displayed}}>
+      <form onSubmit={submit} className="QuizChoice-form WordAtWar-modalWindow">
+        <div className="quizInstruction">{
+            displayMode === "questions" ?
+              "Choose the right definition to win points for your words" : "" }
+        </div>
         {
           quizData? quizData.map((quiz,i) => <div key={`quiz-${i}`} className="quiz">
             <div>{quiz.word}:
@@ -77,14 +85,22 @@ export function QuizChoice() {
                     "correct" :
                       (game.quizResults.results[i].submittedIndex === d?
                         "incorrect" : "")) : "")}>
-                <input type="radio" name={`quiz-${i}-radio`} id={`quiz-${i}-radio-${d}`} value={d} disabled={displayMode !== "questions"} />
-                <label htmlFor={`quiz-${i}-radio-${d}`}>{option.definition} <span style={{fontWeight:"bold"}}>{displayMode === "results"?
-                  game.quizResults.quizzes[i].quiz[d].word : ""}</span></label>
+                <button
+                  className={(displayMode === "questions" && selectedOptions[i] === d)? "selectedOption" : ""} disabled={displayMode !== "questions"}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSelectedOptions(selectedOptions.map((option,optionI) => optionI === i ? d : option));}}>
+                  {option.definition}&nbsp;
+                  <span style={{fontWeight:"bold"}}>{displayMode === "results"?
+                    game.quizResults.quizzes[i].quiz[d].word : ""}</span>
+                </button>
               </div>)
             }
           </div>) : null
         }
-        <input type="submit" value={displayMode === "questions" ? "SUBMIT" : "OK"} />
+        <div className="formFooter">
+          <input type="submit" value={displayMode === "questions" ? "SUBMIT" : "CLOSE"} />
+        </div>
       </form>
     </div>
   );
