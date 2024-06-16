@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Tile } from './Tile';
-import { selectTiles } from './tileSlice';
-import { setMouseCoords, setDisplacedPlayerTile, selectMouse } from './mouseSlice';
+import { selectTiles } from '../store/tileSlice';
+import { setMouseCoords, setDisplacedPlayerTile, selectMouse } from '../store/mouseSlice';
 
 export function SelectedTileOverlay() {
   
@@ -13,6 +13,8 @@ export function SelectedTileOverlay() {
   const selectedTile = tiles.find(tile => tile.selected);
 
   function mousemoveHandler(e) {
+
+    console.log(e.type);
 
     if (e.type === "touchmove") e = e.changedTouches[0];
 
@@ -42,7 +44,8 @@ export function SelectedTileOverlay() {
     <div className="SelectedTileOverlay"
       onMouseMove={selectedTile? mousemoveHandler : null}
       onTouchMove={selectedTile? mousemoveHandler : null}
-      style={{pointerEvents: selectedTile? "auto" : "none"}}>
+      style={{pointerEvents: selectedTile? "auto" : "none"}}
+      >
       {
         selectedTile? <Tile data={selectedTile} mouseCoords={coords} /> : null
       }

@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { selectTiles, blankChoice } from './tileSlice';
+import { selectTiles, blankChoice } from '../store/tileSlice';
 
 
 // Whenever a blank has a position on the board but no letter, BlankTileChoice should be displayed to allow a letter to be chosen

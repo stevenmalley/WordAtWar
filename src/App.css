@@ -21,6 +21,7 @@ body {
   width: 100vw;
   height: 100vh;
   z-index: 200;
+  /* touch-action: none; /* prevents scroll when dragging tiles */
 }
 
 .Wrapper {
@@ -73,14 +74,14 @@ body {
   width: 100%;
   height: 100%;
   background-color: rgba(0,0,0,0.5);
-  z-index: 100;
+  z-index: 400;
 }
 
 .WordAtWar-modalWindow {
   position: absolute;
   left: 10%;
   width: 80%;
-  z-index: 101;
+  z-index: 401;
   background: white;
   padding: 20px;
   border: 5px solid gold;
@@ -251,8 +252,8 @@ body {
 
 .boardSpace .placementScore {
   position: absolute;
-  top: 30px;
-  left: 30px;
+  top: calc(0.7* var(--tileSize));
+  left: calc(0.7* var(--tileSize));
   background-color: yellow;
   color: brown;
   border: 2px solid brown;
@@ -260,7 +261,7 @@ body {
   font-size: calc(0.35*var(--tileSize));
   font-weight: bold;
   padding: 1px 5px;
-  border-radius: 25%;
+  border-radius: 100%;
 }
 
 
@@ -344,14 +345,11 @@ body {
 
 .BagCount {
   color: white;
-  font-size: 20px;
+  font-size: calc(0.4*var(--tileSize));
   float: right;
 }
 
 
-.GameControls {
-  
-}
 
 .GameControls button {
   margin: 0px 5px;

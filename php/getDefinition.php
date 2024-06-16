@@ -163,7 +163,7 @@ function randomDefinition($letter) {
   // average number of words of a given length (2-15) per letter
   //$lengthDistribution = [5,52,217,499,886,1321,1621,1651,1432,1116,809,552,361,228];
 
-  // distribution that favours 4-7 letter words, with declining chances of other words
+  // relative chance of choosing a word of each length (2-15), with a distribution that favours 4-7 letter words, with declining chances of other words
   $lengthDistribution = [80,180,400,800,800,400,70,40,30,20,10,10,10,5];
 
   if ($letter == 'V') {

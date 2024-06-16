@@ -1,7 +1,7 @@
-import { selectUser } from './userSlice';
-import { selectGame } from './gameSlice';
-import { selectTile, placeTile, returnTile, clearBlankChoice, toggleSwap } from './tileSlice';
-import { setMouseCoords, setDisplacedPlayerTile } from './mouseSlice';
+import { selectUser } from '../store/userSlice';
+import { selectGame } from '../store/gameSlice';
+import { selectTile, placeTile, returnTile, clearBlankChoice, toggleSwap } from '../store/tileSlice';
+import { setMouseCoords, setDisplacedPlayerTile } from '../store/mouseSlice';
 import { useSelector, useDispatch } from 'react-redux';
 
 export function Tile({ data, displaced = false, mouseCoords = null }) {
@@ -25,7 +25,7 @@ export function Tile({ data, displaced = false, mouseCoords = null }) {
     if (swapMode) {
       dispatch(toggleSwap(id));
     } else {
-      dispatch(setMouseCoords(e.clientX,e.clientY));
+      dispatch(setMouseCoords(clientX,clientY));
       if (location !== "board") dispatch(setDisplacedPlayerTile(position));
       dispatch(selectTile(id));
       if (blankLetter) dispatch(clearBlankChoice(id));
@@ -34,22 +34,32 @@ export function Tile({ data, displaced = false, mouseCoords = null }) {
   }
 
   function handleMouseUp(e) {
+
+    let clientX, clientY;
+    if (e.type === "touchend") {
+      clientX = e.changedTouches[0].clientX;
+      clientY = e.changedTouches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+
     let minDistance = Infinity;
     let closestPosition = 0;
 
-    if (e.clientY > document.querySelector('.PlayerTiles').getBoundingClientRect().top) {
+    if (clientY > document.querySelector('.PlayerTiles').getBoundingClientRect().top) {
       // place tile in Player Tiles
       let playerTiles = document.querySelectorAll(".PlayerTiles .tile");
       let minDistance = Infinity;
       let closestPosition = 0;
       for (let i = 0; i < playerTiles.length; i++) {
         let rect = playerTiles[i].getBoundingClientRect();
-        let d = Math.abs(e.clientX-rect.left);
+        let d = Math.abs(clientX-rect.left);
         if (d < minDistance) {
           minDistance = d;
           closestPosition = i;
         }
-        if (i === playerTiles.length-1 && Math.abs(e.clientX-rect.right) < minDistance) {
+        if (i === playerTiles.length-1 && Math.abs(clientX-rect.right) < minDistance) {
           closestPosition = i+1;
         }
       }
@@ -62,8 +72,8 @@ export function Tile({ data, displaced = false, mouseCoords = null }) {
       for (let i = 0; i < boardSpaces.length; i++) {
         if (!boardSpaces[i].querySelector(".tile")) {
           let rect = boardSpaces[i].getBoundingClientRect();
-          let dx = e.clientX-(rect.right+rect.left)/2;
-          let dy = e.clientY-(rect.top+rect.bottom)/2;
+          let dx = clientX-(rect.right+rect.left)/2;
+          let dy = clientY-(rect.top+rect.bottom)/2;
           let d = Math.sqrt((dx*dx)+(dy*dy));
           if (d < minDistance) {
               minDistance = d;

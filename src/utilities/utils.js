@@ -1,6 +1,6 @@
-import { loadGame, switchPlayer } from './gameSlice';
-import { loadBoard } from './boardSlice';
-import { loadTiles, updatePlayerTiles } from './tileSlice';
+import { loadGame, switchPlayer } from '../features/store/gameSlice';
+import { loadBoard } from '../features/store/boardSlice';
+import { loadTiles, updatePlayerTiles } from '../features/store/tileSlice';
 
 function buildBoard(width,bonuses) {
   const gameBoard = [];

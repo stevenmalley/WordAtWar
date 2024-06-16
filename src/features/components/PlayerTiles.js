@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
-import { selectUser } from './userSlice';
-import { selectTiles } from './tileSlice';
-import { selectMouse } from './mouseSlice';
+import { selectUser } from '../store/userSlice';
+import { selectTiles } from '../store/tileSlice';
+import { selectMouse } from '../store/mouseSlice';
 import { Tile } from './Tile';
 
 

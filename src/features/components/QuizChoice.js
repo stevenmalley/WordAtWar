@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectUser } from './userSlice';
-import { selectGame, clearQuizResults } from './gameSlice';
-import { loadGameData } from './utils';
+import { selectUser } from '../store/userSlice';
+import { selectGame, clearQuizResults } from '../store/gameSlice';
+import { loadGameData } from '../../utilities/utils';
 import serverPath from '../../serverPath';
 
 

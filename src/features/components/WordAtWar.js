@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectUser, setCurrentGame } from './userSlice';
-import { selectGame } from './gameSlice';
-import { selectBoard } from './boardSlice';
-import { selectTiles } from './tileSlice';
+import { selectUser, setCurrentGame } from '../store/userSlice';
+import { selectGame } from '../store/gameSlice';
+import { selectBoard } from '../store/boardSlice';
+import { selectTiles } from '../store/tileSlice';
 import { BoardSpace } from './BoardSpace';
 import { PlayerTiles } from './PlayerTiles';
 import { BlankTileChoice } from './BlankTileChoice';
 import { QuizChoice } from './QuizChoice';
 import { GameControls } from './GameControls';
-import { loadGameData } from './utils';
-import { calculateScore } from './scoring';
+import { loadGameData } from '../../utilities/utils';
+import { calculateScore } from '../../utilities/scoring';
 import serverPath from '../../serverPath';
 
 

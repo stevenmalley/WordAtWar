@@ -1,9 +1,9 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectUser, setUser } from './userSlice';
-import { selectGame, setSwapping } from './gameSlice';
-import { selectTiles, returnAllTiles, cancelSwaps } from './tileSlice';
-import { loadGameData, loadSwapData } from './utils';
+import { selectUser, setUser } from '../store/userSlice';
+import { selectGame, setSwapping } from '../store/gameSlice';
+import { selectTiles, returnAllTiles, cancelSwaps } from '../store/tileSlice';
+import { loadGameData, loadSwapData } from '../../utilities/utils';
 import { DashCircleDotted, ArrowDown, CheckSquareFill, Repeat } from 'react-bootstrap-icons';
 import serverPath from '../../serverPath';
 
@@ -43,10 +43,22 @@ export function GameControls() {
           tiles:placedTiles.map(tile => [tile.id,tile.position]),
           blanks:placedBlanks.map(blank => [blank.id,blank.blankLetter])})});
       //console.log(response.text());
-      const gameData = await response.json();
-      console.log(gameData);
-      if (gameData.status?.name === "failure") alert(gameData.status.message);
-      else loadGameData(dispatch,gameData,playerID,false);
+      let gameData = await response.text();
+      try {
+        // const gameData = await response.json();
+        // console.log(gameData);
+        // if (gameData.status?.name === "failure") alert(gameData.status.message);
+        // else loadGameData(dispatch,gameData,playerID,false);
+        
+        gameData = JSON.parse(gameData);
+        console.log(gameData);
+        if (gameData.status?.name === "failure") alert(gameData.status.message);
+        else loadGameData(dispatch,gameData,playerID,false);
+      } catch (err) {
+        console.log(err);
+        console.log(response);
+        console.log(gameData);
+      }
     }
   }
 

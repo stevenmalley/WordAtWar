@@ -345,7 +345,7 @@ $newTiles = sizeof($tiles);
 while ($newTiles-- > 0) {
   $conn->query("UPDATE tile SET location = '$playerID', position = null
     WHERE gameID = $gameID AND location = 'bag' AND
-      position = ( SELECT MIN(position) FROM tile WHERE gameID = $gameID AND location = 'bag' )");
+      position = ( SELECT MIN(position) FROM (SELECT position, gameID, location FROM tile) t WHERE gameID = $gameID AND location = 'bag' )");
 }
 // $newPosition = 0;
 // while ($newPosition < 7) {
