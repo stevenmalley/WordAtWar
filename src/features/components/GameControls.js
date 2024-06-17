@@ -120,15 +120,18 @@ export function GameControls() {
     <div className="GameControls">
       <button onClick={() => dispatch(returnAllTiles(playerID))}><ArrowDown size={30} /><span className="buttonLabel">RETURN TILES</span></button>
       <button onClick={pass}><DashCircleDotted size={30} /><span className="buttonLabel">PASS<br />&nbsp;</span></button>
-      <button onClick={toggleSwap} disabled={game.bag===0}><Repeat size={30} /><span className="buttonLabel">{game.swapping? "CANCEL SWAP" : "SWAP TILES"}</span></button>
+      <button onClick={toggleSwap} disabled={game.bag===0} style={game.swapping? {backgroundColor:"red"} : null}>
+        <Repeat size={30} />
+        <span className="buttonLabel">{game.swapping? "CANCEL SWAP" : "SWAP TILES"}</span>
+      </button>
       <button onClick={submit}><CheckSquareFill size={30} /><span className="buttonLabel">SUBMIT<br />&nbsp;</span></button>
-      <br />
+      {/* <br />
       <br />
       <button onClick={switchUser}>SWITCH USER</button>
       <br />
       <br />
       <button onClick={newGame}>DELETE AND CREATE NEW GAME</button>
-      <button onClick={newShortGame}>SHORT GAME</button>
+      <button onClick={newShortGame}>SHORT GAME</button> */}
     </div>
   );
 }

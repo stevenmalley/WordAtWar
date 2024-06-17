@@ -15,17 +15,12 @@ import { createSlice } from '@reduxjs/toolkit';
 //   }
 // );
 
-export const boardSlice = createSlice({
-  name: 'board',
-  initialState: [],
+export const boardRenderedSlice = createSlice({
+  name: 'boardRendered',
+  initialState: false,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
-    loadBoard:(board,action) => action.payload,
-    placeTile:(board,action) => {
-      const { row, col, tile } = action.payload;
-      board[row][col].letter = tile.letter;
-      board[row][col].score = tile.score;
-    },
+    setBoardRendered:(board,action) => true
     // increment: (state) => {
     //   // Redux Toolkit allows us to write "mutating" logic in reducers. It
     //   // doesn't actually mutate the state because it uses the Immer library,
@@ -60,7 +55,7 @@ export const boardSlice = createSlice({
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
-export const selectBoard = (state) => state.board;
+export const selectBoardRendered = (state) => state.boardRendered;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
@@ -74,14 +69,8 @@ export const selectBoard = (state) => state.board;
 
 
 
-export const loadBoard = (board) => {
+export const setBoardRendered = () => {
   return (dispatch, getState) => {
-    dispatch({type: 'board/loadBoard', payload: board});
-  }
-}
-
-export const placeTile = (row,col,tile) => {
-  return (dispatch, getState) => {
-    dispatch({type: 'board/placeTile', payload: {row, col, tile}});
+    dispatch({type: 'boardRendered/setBoardRendered', payload: true});
   }
 };

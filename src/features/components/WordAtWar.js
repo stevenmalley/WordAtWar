@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectUser, setCurrentGame } from '../store/userSlice';
+import { selectUser, setCurrentGame, setUser } from '../store/userSlice';
 import { selectGame } from '../store/gameSlice';
 import { selectBoard } from '../store/boardSlice';
 import { selectTiles } from '../store/tileSlice';
@@ -57,6 +57,17 @@ export function WordAtWar() {
     }
     fetchLatestGame();
   },[]);
+  useEffect(() => {
+    dispatch(setUser({currentGameID, playerID:1, name:"TestPlayer1"}));
+  },[]);
+  let secretClicks = 0;
+  function switchUser() {
+    console.log("click");
+    if (secretClicks === 2) {
+      console.log("switch");
+      dispatch(setUser({currentGameID, playerID:2, name:"TestPlayer2"}));
+    } else secretClicks++;
+  }
   
 
   
@@ -75,6 +86,7 @@ export function WordAtWar() {
 
   
 
+
   return (
     <div className={"WordAtWar"+(game["player"+game.activePlayer] === playerID ? " activePlayer" : "")}>
       <div className="Wrapper">
@@ -91,7 +103,7 @@ export function WordAtWar() {
               <div key={"boardRow"+r} className="boardRow">
                 {
                   boardRow.map((boardSquare,c) => {
-                    const tile = tiles.find(tile => tile.location === "board" && Math.floor((tile.position-1)/15) === r && (tile.position-1)%15 === c);
+                    const tile = tiles.find(tile => tile.locked && Math.floor((tile.position-1)/15) === r && (tile.position-1)%15 === c);
                     const score = (!placementScore.error && placementScore.coord.row === r && placementScore.coord.col === c) ? placementScore.score : null;
                     return <BoardSpace key={`boardSquare${r}-${c}`} data={boardSquare} tile={tile} score={score} />
                   })
@@ -101,7 +113,7 @@ export function WordAtWar() {
           }
         </div>
         <PlayerTiles />
-        <div className="BagCount"><span style={{fontWeight:"bold"}}>{game.bag}</span><br />TILES<br />REMAINING</div>
+        <div className="BagCount"><span style={{fontWeight:"bold"}}>{game.bag}</span><br />TILES<br />REMAININ<span style={{position:"relative",zIndex:"1000"}} onClick={switchUser}>G</span></div>
         <GameControls />
       </div>
     </div>

@@ -8,6 +8,7 @@ import { gameSlice } from './features/store/gameSlice';
 import { boardSlice } from './features/store/boardSlice';
 import { tileSlice } from './features/store/tileSlice';
 import { mouseSlice } from './features/store/mouseSlice';
+import { boardRenderedSlice } from './features/store/boardRenderedSlice';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
@@ -21,7 +22,8 @@ const store = configureStore({
     game:gameSlice.reducer,
     board:boardSlice.reducer,
     tiles:tileSlice.reducer,
-    mouse:mouseSlice.reducer
+    mouse:mouseSlice.reducer,
+    boardRendered:boardRenderedSlice.reducer
   })
 });
 

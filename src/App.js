@@ -1,14 +1,11 @@
-import React from 'react';
 import { WordAtWar } from './features/components/WordAtWar';
-import { SelectedTileOverlay } from './features/components/SelectedTileOverlay';
+import { PlayerTileOverlay } from './features/components/PlayerTileOverlay';
 import './App.css';
 
 function App() {
-  
-
   return (
     <div className="App">
-      <SelectedTileOverlay />
+      <PlayerTileOverlay />
       <WordAtWar />
     </div>
   );

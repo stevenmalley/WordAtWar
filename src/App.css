@@ -16,12 +16,13 @@ body {
   user-select: none;
 }
 
-.SelectedTileOverlay {
-  position: fixed;
+.PlayerTileOverlay {
+  position: absolute;
+  top: 0;
   width: 100vw;
   height: 100vh;
   z-index: 200;
-  /* touch-action: none; /* prevents scroll when dragging tiles */
+  touch-action: none; /* prevents scroll when dragging tiles */
 }
 
 .Wrapper {
@@ -128,6 +129,7 @@ body {
   padding: 0px 15px;
   font-weight: bold;
   font-family: Arial;
+  font-size: min(24px,4vw);
 }
 
 .quizReward.correct, .quizResult.correct {
@@ -143,7 +145,7 @@ body {
 }
 
 .quizOption button {
-  font-size: 1em;
+  font-size: min(20px,3vw);
   background-color: gold;
   border: 1px solid grey;
   border-radius: 5px;
@@ -257,7 +259,7 @@ body {
   background-color: yellow;
   color: brown;
   border: 2px solid brown;
-  z-index: 150;
+  z-index: 350;
   font-size: calc(0.35*var(--tileSize));
   font-weight: bold;
   padding: 1px 5px;
@@ -314,10 +316,7 @@ body {
 
 .tile.selected {
   background-color: gold;
-}
-
-.tile.displaced {
-  left: var(--tileSize);
+  z-index: 210;
 }
 
 .tile.swapping {
@@ -363,6 +362,8 @@ body {
   border-radius: 10%;
   color: white;
   cursor: pointer;
+  position: relative;
+  z-index: 201;
 }
 
 .GameControls button:hover {

@@ -4,12 +4,13 @@ import { selectTile, placeTile, returnTile, clearBlankChoice, toggleSwap } from 
 import { setMouseCoords, setDisplacedPlayerTile } from '../store/mouseSlice';
 import { useSelector, useDispatch } from 'react-redux';
 
-export function Tile({ data, displaced = false, mouseCoords = null }) {
+export function Tile({ data, displaced = false, coords = null }) {
 
   const { playerID } = useSelector(selectUser);
   const { swapping:swapMode } = useSelector(selectGame);
   const dispatch = useDispatch();
   const { letter, score, id, selected, locked, blankLetter, location, position, swapping } = data;
+
 
   function handleMouseDown(e) {
     
@@ -49,17 +50,17 @@ export function Tile({ data, displaced = false, mouseCoords = null }) {
 
     if (clientY > document.querySelector('.PlayerTiles').getBoundingClientRect().top) {
       // place tile in Player Tiles
-      let playerTiles = document.querySelectorAll(".PlayerTiles .tile");
+      let playerHandTiles = Array.from(document.querySelectorAll(".tile[data-location = 'player']")).sort((a,b) => parseInt(a.getAttribute("data-position"))-parseInt(b.getAttribute("data-position")));
       let minDistance = Infinity;
       let closestPosition = 0;
-      for (let i = 0; i < playerTiles.length; i++) {
-        let rect = playerTiles[i].getBoundingClientRect();
+      for (let i = 0; i < playerHandTiles.length; i++) {
+        let rect = playerHandTiles[i].getBoundingClientRect();
         let d = Math.abs(clientX-rect.left);
         if (d < minDistance) {
           minDistance = d;
           closestPosition = i;
         }
-        if (i === playerTiles.length-1 && Math.abs(clientX-rect.right) < minDistance) {
+        if (i === playerHandTiles.length-1 && Math.abs(clientX-rect.right) < minDistance) {
           closestPosition = i+1;
         }
       }
@@ -87,24 +88,33 @@ export function Tile({ data, displaced = false, mouseCoords = null }) {
   }
 
   function tileStyles() {
-    if (selected) {
+    if (coords) {
+      let top = (coords.y+1)+"px";
+      let left = (coords.x+1)+"px";
+      if (selected) {
+        top = `calc(${top} - 0.5*var(--tileSize))`;
+        left = `calc(${left} - 0.5*var(--tileSize))`;
+      } else if (displaced) {
+        left = `calc(${left} + var(--tileSize))`;
+      }
       return {
         position:"absolute",
-        top:(mouseCoords.y-16)+"px",
-        left:(mouseCoords.x-16)+"px",
-        zIndex: 200,
+        top,left
       };
     } else return {};
   }
 
   return (
     <div
-      className={"tile"+(selected? " selected" : "")+(locked? " locked" : "")+(displaced? " displaced" : "")+(swapping && !locked ? " swapping" : "")}
+      className={"tile"+(selected? " selected" : "")+(locked? " locked" : "")+(displaced? " displaced" : "")+((swapping && !locked) ? " swapping" : "")}
       onMouseDown={locked? null : handleMouseDown}
       onTouchStart={locked? null : handleMouseDown}
       onMouseUp={selected? handleMouseUp : null}
       onTouchEnd={selected? handleMouseUp : null}
-      style={tileStyles()}>
+      style={tileStyles()}
+      data-location={typeof(location) === "string" ? location : "player"}
+      data-position={position}
+      >
       <div className="tile-letter">{letter || blankLetter}</div>
       <div className="tile-score">{score || ""}</div>
     </div>

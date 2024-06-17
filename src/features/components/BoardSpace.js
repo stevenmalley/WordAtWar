@@ -1,8 +1,12 @@
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { setBoardRendered } from '../store/boardRenderedSlice';
 import { Tile } from './Tile';
 
 
 
 export function BoardSpace({ data, tile, score }) {
+  const dispatch = useDispatch();
 
   let bonusText;
   switch (data.bonus) {
@@ -12,8 +16,11 @@ export function BoardSpace({ data, tile, score }) {
     case "doubleLetter" : bonusText = <span>LETTER<br /><span className="bonusSpaceMultiplier">&times;2</span></span>; break;
   }
 
+  useEffect(() => {dispatch(setBoardRendered())},[]);
+
+
   return (
-    <div className={"boardSpace"+(data.bonus? ` ${data.bonus}` : "")+(data.centre? " board-centre" : "")+(tile? " boardSpace-faded" : "")} >
+    <div className={"boardSpace"+(data.bonus? ` ${data.bonus}` : "")+(data.centre? " board-centre" : "")+(tile? " boardSpace-faded" : "")}>
         {
           data.bonus? <div className="bonusSpace">{bonusText}</div> : null
         }

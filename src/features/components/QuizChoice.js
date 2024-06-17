@@ -75,7 +75,7 @@ export function QuizChoice() {
         {
           quizData? quizData.map((quiz,i) => <div key={`quiz-${i}`} className="quiz">
             <div>{quiz.word}:
-              <span className={"quizReward "+displayOptions(i)}>{quiz.score} points</span>
+              <span className={"quizReward "+displayOptions(i)}>{quiz.score}&nbsp;points</span>
               <span className={"quizResult "+displayOptions(i)}>{displayOptions(i).toUpperCase()}</span>
             </div>
             {
