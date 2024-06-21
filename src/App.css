@@ -313,6 +313,7 @@ body {
 
 .tile-score {
   font-size: calc(0.3*var(--tileSize));
+  line-height: calc(0.5*var(--tileSize));
   position: absolute;
   right: 2px;
   top: -2px;
@@ -320,12 +321,15 @@ body {
 }
 
 .tile.enlarged .tile-letter {
+  top: 3px;
   font-size: calc(0.7*var(--growingTileSize));
   line-height: calc(0.9*var(--growingTileSize));
 }
 
 .tile.enlarged .tile-score {
+  right: 3px;
   font-size: calc(0.3*var(--growingTileSize));
+  line-height: calc(0.45*var(--growingTileSize));
 }
 
 .tile.selected {
@@ -388,6 +392,10 @@ body {
 .GameControls button span.buttonLabel {
   display: block;
   font-weight: bold;
+}
+
+.GameControls button[disabled] {
+  background-color: dimgrey;
 }
 
 
