@@ -71,7 +71,7 @@ export function calculateScore(board,tiles) {
       });
     });
     if (!neighbour) {
-      return {error: "Tiles must be placed touching tiles already on the board"};}
+      return {error: "Tiles must be placed touching tiles already on the board",score:null,coord:null};}
   }
 
 

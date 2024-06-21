@@ -5,8 +5,6 @@ include("checkWord.php");
 include("boardData.php");
 include("getDefinition.php");
 
-header('Access-Control-Allow-Origin: *');
-header("Access-Control-Allow-Headers: *");
 header('Content-Type: application/json; charset=UTF-8');
 
 $conn = new mysqli($cd_host, $cd_user, $cd_password, $cd_dbname, $cd_port, $cd_socket);

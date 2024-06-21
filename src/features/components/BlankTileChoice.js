@@ -16,7 +16,7 @@ export function BlankTileChoice() {
   }
 
   return (
-    <div className="BlankTileChoice-modal WordAtWar-modal" style={{display:blank? "block" : "none"}}>
+    <div className="BlankTileChoice-modal WordAtWar-modal" style={{display:blank? "flex" : "none"}}>
       <div className="BlankTileChoice-buttons WordAtWar-modalWindow">
         {
           Array(26).fill(null).map((_,i) => <button key={`BlankTileChoice-${i}`} onClick={e => handleClick(String.fromCharCode(65+i))}>

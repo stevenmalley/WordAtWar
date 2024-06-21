@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUser, setCurrentGame, setUser } from '../store/userSlice';
 import { selectGame } from '../store/gameSlice';
@@ -10,7 +10,7 @@ import { BlankTileChoice } from './BlankTileChoice';
 import { QuizChoice } from './QuizChoice';
 import { GameControls } from './GameControls';
 import { loadGameData } from '../../utilities/utils';
-import { calculateScore } from '../../utilities/scoring';
+import { setBoardRendered } from '../store/boardRenderedSlice';
 import serverPath from '../../serverPath';
 
 
@@ -21,8 +21,7 @@ export function WordAtWar() {
   const board = useSelector(selectBoard);
   const tiles = useSelector(selectTiles);
   const dispatch = useDispatch();
-
-  const placementScore = calculateScore(board,tiles);
+  const [ updateIntervals, setUpdateIntervals ] = useState([]);
 
   useEffect(() => {
     if (tiles.length > 0) {
@@ -58,7 +57,13 @@ export function WordAtWar() {
     fetchLatestGame();
   },[]);
   useEffect(() => {
-    dispatch(setUser({currentGameID, playerID:1, name:"TestPlayer1"}));
+    const parameters = window.location.search.slice(1).split('&').map(par => par.split('='));
+    const login = parameters.find(par => par[0] === "playerID");
+    if (login) {
+      const loginID = parseInt(login[1]);
+      dispatch(setUser({currentGameID, playerID:loginID, name:"TestPlayer"+loginID}));
+    }
+    else dispatch(setUser({currentGameID, playerID:1, name:"TestPlayer1"}));
   },[]);
   let secretClicks = 0;
   function switchUser() {
@@ -85,7 +90,36 @@ export function WordAtWar() {
 
 
   
+  useEffect(() => {
+    updateIntervals.forEach(intID => {
+      clearInterval(intID);
+    });
 
+    if (currentGameID && game.id === currentGameID && game["player"+game.activePlayer] !== playerID) {
+      const intervalID = setInterval(
+        async () => {
+          
+            console.log("checking for updates");
+            const response = await fetch(serverPath+`/php/getGameData.php?gameID=${currentGameID}&playerID=${playerID}`);
+            //console.log(response.text());
+            const gameData = await response.json();
+
+            if (gameData.game["player"+gameData.game.activePlayer] !== game["player"+game.activePlayer]) {
+              loadGameData(dispatch,gameData,playerID);
+              console.log("loading updates");
+            }
+          }, 5000);
+      setUpdateIntervals([intervalID]);
+    }
+  },[game]);
+
+
+  
+  useEffect(() => {
+    if (game.width && document.getElementsByClassName("boardSpace").length === game.width*game.width) {
+      dispatch(setBoardRendered());
+    }
+  },[game]);
 
   return (
     <div className={"WordAtWar"+(game["player"+game.activePlayer] === playerID ? " activePlayer" : "")}>
@@ -104,8 +138,7 @@ export function WordAtWar() {
                 {
                   boardRow.map((boardSquare,c) => {
                     const tile = tiles.find(tile => tile.locked && Math.floor((tile.position-1)/15) === r && (tile.position-1)%15 === c);
-                    const score = (!placementScore.error && placementScore.coord.row === r && placementScore.coord.col === c) ? placementScore.score : null;
-                    return <BoardSpace key={`boardSquare${r}-${c}`} data={boardSquare} tile={tile} score={score} />
+                    return <BoardSpace key={`boardSquare${r}-${c}`} data={boardSquare} tile={tile} />
                   })
                 }
               </div>

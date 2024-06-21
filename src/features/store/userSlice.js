@@ -4,7 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const fakeLogin = {
   name: "???",
   playerID: 0, //3834109,
-  currentGameID: null
+  currentGameID: 0
 }
 
 

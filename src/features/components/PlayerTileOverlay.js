@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Tile } from './Tile';
+import { selectGame } from '../store/gameSlice';
+import { selectBoard } from '../store/boardSlice';
 import { selectTiles } from '../store/tileSlice';
 import { setMouseCoords, setDisplacedPlayerTile, selectMouse } from '../store/mouseSlice';
-import { selectBoardRendered, setBoardRendered } from '../store/boardRenderedSlice';
+import { selectBoardRendered } from '../store/boardRenderedSlice';
+import { calculateScore } from '../../utilities/scoring';
 
 export function PlayerTileOverlay() {
   
   const tiles = useSelector(selectTiles);
   const { coords, displacement } = useSelector(selectMouse);
+  const game = useSelector(selectGame);
+  const board = useSelector(selectBoard);
   const boardRendered = useSelector(selectBoardRendered); // rerender when board is rendered so boardSpaces is populated in order to locate player hand tiles
   const [ dimensions, setDimensions ] = useState({width:window.innerHeight,height:window.innerWidth});
   const dispatch = useDispatch();
@@ -28,10 +33,10 @@ export function PlayerTileOverlay() {
     if (tile.selected) return {tile,coords};
     if (tile.location === "board") {
       let boardSpaceRect = boardSpaces[tile.position-1].getBoundingClientRect();
-      return {tile,coords:{x:boardSpaceRect.left, y:boardSpaceRect.top}};
+      return {tile,coords:{x:boardSpaceRect.left+window.scrollX, y:boardSpaceRect.top+window.scrollY}};
     } else {
       let playerTileHolderRect = playerTileHolders[tile.position].getBoundingClientRect();
-      return {tile,coords:{x:playerTileHolderRect.left, y:playerTileHolderRect.top}};
+      return {tile,coords:{x:playerTileHolderRect.left+window.scrollX, y:playerTileHolderRect.top+window.scrollY}};
     }
   }) : [];
 
@@ -61,13 +66,23 @@ export function PlayerTileOverlay() {
     } else if (displacement !== 7) dispatch(setDisplacedPlayerTile(7));
   }
 
+  
+  
+  const placementScore = calculateScore(board,tiles);
+  const score = (!placementScore.error && tiles.some(tile => !tile.locked && tile.location === "board")) ? placementScore.score : null;
+  const scoreStyles = (boardSpaces.length > 0 && !placementScore.error) ? {
+    display: score !== null? "block" : "none",
+    top: "calc("+boardSpaces[placementScore.coord.row*game.width + placementScore.coord.col].getBoundingClientRect().top+"px + "+
+      ((placementScore.coord.col === game.width-1)? "0.9" : "0.7")+" * var(--tileSize))",
+    left: "calc("+boardSpaces[placementScore.coord.row*game.width + placementScore.coord.col].getBoundingClientRect().left+"px + "+
+      ((placementScore.coord.col === game.width-1)? "0.2" : "0.7")+" * var(--tileSize))"
+  } : null;
+
   return (
     <div className="PlayerTileOverlay"
       onMouseMove={selectedTile? mousemoveHandler : null}
       onTouchMove={selectedTile? mousemoveHandler : null}
-      // onMouseMove={mousemoveHandler}
-      // onTouchMove={mousemoveHandler}
-      // style={{pointerEvents: selectedTile? "auto" : "none"}}
+      style={selectedTile? {zIndex:1000} : null}
       >
       {
         // selectedTile? <Tile data={selectedTile} mouseCoords={coords} /> : null
@@ -77,6 +92,7 @@ export function PlayerTileOverlay() {
 
 
       }
+      <div className="placementScore" style={scoreStyles}>{score}</div>
     </div>
   );
 }

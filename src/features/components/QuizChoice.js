@@ -55,7 +55,7 @@ export function QuizChoice() {
     }
   }
 
-  const displayed = displayMode === "none" ? "none" : "block";
+  const displayed = displayMode === "none" ? "none" : "flex";
   const quizData = game.quizzes || game.quizResults?.quizzes;
 
   function displayOptions(quiz,questionOption = "",correctOption = "correct",incorrectOption = "incorrect") {

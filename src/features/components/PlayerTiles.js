@@ -1,7 +1,5 @@
-
-
 export function PlayerTiles() {
-
+  
   return (
     <div className="PlayerTiles">
       {

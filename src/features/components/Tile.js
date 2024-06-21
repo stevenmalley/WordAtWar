@@ -10,6 +10,7 @@ export function Tile({ data, displaced = false, coords = null }) {
   const { swapping:swapMode } = useSelector(selectGame);
   const dispatch = useDispatch();
   const { letter, score, id, selected, locked, blankLetter, location, position, swapping } = data;
+  const enlarged = location !== "board";
 
 
   function handleMouseDown(e) {
@@ -71,7 +72,8 @@ export function Tile({ data, displaced = false, coords = null }) {
       // place tile on board
       let boardSpaces = document.querySelectorAll(".boardSpace");
       for (let i = 0; i < boardSpaces.length; i++) {
-        if (!boardSpaces[i].querySelector(".tile")) {
+        //if (!boardSpaces[i].querySelector(".tile")) {
+        if (!document.querySelector(`.tile[data-position="${i+1}"][data-location="board"]`)) {
           let rect = boardSpaces[i].getBoundingClientRect();
           let dx = clientX-(rect.right+rect.left)/2;
           let dy = clientY-(rect.top+rect.bottom)/2;
@@ -92,13 +94,12 @@ export function Tile({ data, displaced = false, coords = null }) {
       let top = (coords.y+1)+"px";
       let left = (coords.x+1)+"px";
       if (selected) {
-        top = `calc(${top} - 0.5*var(--tileSize))`;
-        left = `calc(${left} - 0.5*var(--tileSize))`;
+        top = `calc(${top} - calc(0.5*var(--growingTileSize)))`;
+        left = `calc(${left} - calc(0.5*var(--growingTileSize)))`;
       } else if (displaced) {
-        left = `calc(${left} + var(--tileSize))`;
+        left = `calc(${left} + var(--growingTileSize))`;
       }
       return {
-        position:"absolute",
         top,left
       };
     } else return {};
@@ -106,7 +107,9 @@ export function Tile({ data, displaced = false, coords = null }) {
 
   return (
     <div
-      className={"tile"+(selected? " selected" : "")+(locked? " locked" : "")+(displaced? " displaced" : "")+((swapping && !locked) ? " swapping" : "")}
+      className={"tile"+(selected? " selected" : "")+
+        (locked? " locked" : "")+(enlarged? " enlarged" : "")+
+        ((swapping && !locked) ? " swapping" : "")}
       onMouseDown={locked? null : handleMouseDown}
       onTouchStart={locked? null : handleMouseDown}
       onMouseUp={selected? handleMouseUp : null}
