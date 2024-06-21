@@ -172,7 +172,7 @@ body {
 }
 
 .quizOption .selectedOption {
-  box-shadow: 0 0 calc(0.2* var(--tileSize)) calc(0.15* var(--tileSize)) #6c19ca;
+  box-shadow: 0 0 calc(0.2* var(--tileSize)) calc(0.15* var(--tileSize)) blue;
 }
 
 .quizOption button[disabled] {
