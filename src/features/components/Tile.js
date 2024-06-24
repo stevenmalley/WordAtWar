@@ -14,15 +14,9 @@ export function Tile({ data, displaced = false, coords = null }) {
 
 
   function handleMouseDown(e) {
-    
-    let clientX, clientY;
-    if (e.type === "touchstart") {
-      clientX = e.changedTouches[0].clientX;
-      clientY = e.changedTouches[0].clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    }
+
+    let clientX = e.clientX;
+    let clientY = e.clientY;
 
     if (swapMode) {
       dispatch(toggleSwap(id));
@@ -35,7 +29,24 @@ export function Tile({ data, displaced = false, coords = null }) {
     }
   }
 
+  function handleTouchStart(e) {
+    
+    let clientX = e.changedTouches[0].clientX;
+    let clientY = e.changedTouches[0].clientY;
+
+    if (!swapMode) {
+      dispatch(setMouseCoords(clientX,clientY));
+      if (location !== "board") dispatch(setDisplacedPlayerTile(position));
+      dispatch(selectTile(id));
+      if (blankLetter) dispatch(clearBlankChoice(id));
+      e.stopPropagation();
+    }
+    // let the mouseclick event handle tile swapping
+  }
+
   function handleMouseUp(e) {
+
+    console.log(e.type);
 
     let clientX, clientY;
     if (e.type === "touchend") {
@@ -97,7 +108,7 @@ export function Tile({ data, displaced = false, coords = null }) {
         top = `calc(${top} - calc(0.5*var(--growingTileSize)))`;
         left = `calc(${left} - calc(0.5*var(--growingTileSize)))`;
       } else if (displaced) {
-        left = `calc(${left} + var(--growingTileSize))`;
+        left = `calc(${left} + var(--growingTileSize) + min(1vw, 15px))`;
       }
       return {
         top,left
@@ -111,7 +122,7 @@ export function Tile({ data, displaced = false, coords = null }) {
         (locked? " locked" : "")+(enlarged? " enlarged" : "")+
         ((swapping && !locked) ? " swapping" : "")}
       onMouseDown={locked? null : handleMouseDown}
-      onTouchStart={locked? null : handleMouseDown}
+      onTouchStart={locked? null : handleTouchStart}
       onMouseUp={selected? handleMouseUp : null}
       onTouchEnd={selected? handleMouseUp : null}
       style={tileStyles()}

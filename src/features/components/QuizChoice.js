@@ -99,7 +99,7 @@ export function QuizChoice() {
           </div>) : null
         }
         <div className="formFooter">
-          <input type="submit" value={displayMode === "questions" ? "SUBMIT" : "CLOSE"} />
+          <input type="submit" className="submitButton" value={displayMode === "questions" ? "SUBMIT" : "CLOSE"} />
         </div>
       </form>
     </div>

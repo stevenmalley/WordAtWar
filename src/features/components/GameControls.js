@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUser, setUser } from '../store/userSlice';
-import { selectGame, setSwapping } from '../store/gameSlice';
+import { selectGame, setSwapping, setMessage } from '../store/gameSlice';
 import { selectTiles, returnAllTiles, cancelSwaps } from '../store/tileSlice';
 import { loadGameData, loadSwapData } from '../../utilities/utils';
 import { DashCircleDotted, ArrowDown, CheckSquareFill, Repeat } from 'react-bootstrap-icons';
@@ -28,31 +28,26 @@ export function GameControls() {
       const response = await fetch(serverPath+'/php/submitSwap.php',
         {method: "POST",
         headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
-        body: JSON.stringify({playerID, gameID:currentGameID,
+        body: JSON.stringify({playerID, gameID:game.id,
           tiles:swappedTiles.map(tile => tile.id)})});
       const swapData = await response.json();
-      if (swapData.status?.name === "failure") alert(swapData.status.message);
-      else loadSwapData(dispatch,swapData,playerID);
+      if (swapData.status?.name === "failure") dispatch(setMessage(swapData.status.message));
+      else loadSwapData(dispatch,swapData,game.id,playerID);
 
     // submitting played tiles
     } else if (placedTiles.length > 0) {
       const response = await fetch(serverPath+'/php/submitPlay.php',
         {method: "POST",
         headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
-        body: JSON.stringify({playerID, gameID:currentGameID,
+        body: JSON.stringify({playerID, gameID:game.id,
           tiles:placedTiles.map(tile => [tile.id,tile.position]),
           blanks:placedBlanks.map(blank => [blank.id,blank.blankLetter])})});
       //console.log(response.text());
       let gameData = await response.text();
       try {
-        // const gameData = await response.json();
-        // console.log(gameData);
-        // if (gameData.status?.name === "failure") alert(gameData.status.message);
-        // else loadGameData(dispatch,gameData,playerID,false);
-        
         gameData = JSON.parse(gameData);
         console.log(gameData);
-        if (gameData.status?.name === "failure") alert(gameData.status.message);
+        if (gameData.status?.name === "failure") dispatch(setMessage(gameData.status.message));
         else loadGameData(dispatch,gameData,playerID,false);
       } catch (err) {
         console.log(err);
@@ -66,9 +61,9 @@ export function GameControls() {
     const response = await fetch(serverPath+'/php/submitPass.php',
         {method: "POST",
         headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
-        body: JSON.stringify({playerID, gameID:currentGameID})});
+        body: JSON.stringify({playerID, gameID:game.id})});
       const gameData = await response.json();
-      if (gameData.status?.name === "failure") alert(gameData.status.message);
+      if (gameData.status?.name === "failure") dispatch(setMessage(gameData.status.message));
       else loadGameData(dispatch,gameData,playerID,false);
   }
 

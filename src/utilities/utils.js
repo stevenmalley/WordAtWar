@@ -31,25 +31,7 @@ export function loadGameData(dispatch,gameData,playerID,includeBoard = true) {
     tile.locked = tile.location === "board";
   });
 
-  // if any client-side positions are found for player tiles, apply them, otherwise assign positions in order
-  const clientTilePositions = JSON.parse(localStorage.getItem(`WordAtWar-game${gameData.game.id}-player${playerID}-clientTilePositions`));
-  if (clientTilePositions) {
-    clientTilePositions.forEach(tp => {
-      const tile = gameData.tiles.find(tile => tile.id === tp.id);
-      // the opponent might have submitted tiles where the player had temporarily placed them; remove the player's tile from the board if it is blocked
-      const blockingTile = tp.location === "board" ? gameData.tiles.find(tile => tile.location === "board" && tile.position === tp.position) : null;
-      if (tile && !blockingTile) {
-        tile.location = tp.location;
-        tile.position = tp.position;
-        tile.blankLetter = tp.blankLetter;
-      }
-    });
-  }
-
-  // for clientTiles in the PlayerTile display (not on the board), collapse those with unique numerical positions down so they increment from 0, and give continuing numbers to any others
-  let positionedTiles = gameData.tiles.filter(tile => tile.location !== "board" && !isNaN(tile.position)).sort((a,b) => a.position-b.position);
-  positionedTiles.forEach((tp,i) => tp.position = i);
-  gameData.tiles.filter(tp => tp.location !== "board" && !positionedTiles.includes(tp)).forEach((tp,i) => tp.position = i+positionedTiles.length);
+  gameData.tiles = applyLocalPositions(gameData.tiles,gameData.game.id,playerID);
   
   dispatch(loadGame(gameData.game));
   if (includeBoard) dispatch(loadBoard(buildBoard(gameData.game.width,gameData.bonuses)));
@@ -59,16 +41,43 @@ export function loadGameData(dispatch,gameData,playerID,includeBoard = true) {
     selected: false}))));
 }
 
-export function loadSwapData(dispatch,swapData,playerID) {
+export function loadSwapData(dispatch,swapData,gameID,playerID) {
   /*
     swapData = {
       tilesRemoved: [tileID, ...],
       newPlayerTiles: [{id,letter,score,location,position}, ...]}
   */
+
+  swapData.newPlayerTiles = applyLocalPositions(swapData.newPlayerTiles,gameID,playerID);
+
   dispatch(switchPlayer(swapData.activePlayer));
   dispatch(updatePlayerTiles(swapData.newPlayerTiles.map(tile => ({
     ...tile,
     location: parseInt(tile.location),
     selected: false,
     locked: false})),playerID));
+}
+
+function applyLocalPositions(tiles,gameID,playerID) {
+  // if any client-side positions are found for player tiles, apply them, otherwise assign positions in order
+  const clientTilePositions = JSON.parse(localStorage.getItem(`WordAtWar-game${gameID}-player${playerID}-clientTilePositions`));
+  if (clientTilePositions) {
+    clientTilePositions.forEach(tp => {
+      const tile = tiles.find(tile => tile.id === tp.id);
+      // the opponent might have submitted tiles where the player had temporarily placed them; remove the player's tile from the board if it is blocked
+      const blockingTile = tp.location === "board" ? tiles.find(tile => tile.location === "board" && tile.position === tp.position) : null;
+      if (tile && !blockingTile) {
+        tile.location = tp.location;
+        tile.position = tp.position;
+        tile.blankLetter = tp.blankLetter;
+      }
+    });
+  }
+
+  // for clientTiles in the PlayerTile display (not on the board), collapse those with unique numerical positions down so they increment from 0, and give continuing numbers to any others
+  let positionedTiles = tiles.filter(tile => tile.location !== "board" && tile.position !== null).sort((a,b) => a.position-b.position);
+  positionedTiles.forEach((tp,i) => tp.position = i);
+  tiles.filter(tp => tp.location !== "board" && !positionedTiles.includes(tp)).forEach((tp,i) => tp.position = i+positionedTiles.length);
+
+  return tiles;
 }

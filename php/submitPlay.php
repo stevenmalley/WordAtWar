@@ -296,9 +296,10 @@ if (sizeof($tiles) == 1 && sizeof($submittedWords) == 2) {
 // all words must be valid
 $invalidWords = [];
 foreach($submittedWords as $word) {
-  if (!checkWord($word['word'])) $invalidWords[] = $word['word'];
+  if (!in_array($word['word'],$invalidWords) && !checkWord($word['word'])) $invalidWords[] = $word['word'];
 }
-if (sizeof($invalidWords) > 0) fail("Word(s) not in our dictionary: ".implode(", ",$invalidWords));
+if (sizeof($invalidWords) > 1) fail(implode(", ",$invalidWords)." are not permitted words");
+else if (sizeof($invalidWords) == 1) fail(implode(", ",$invalidWords)." is not a valid word");
 
 
 

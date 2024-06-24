@@ -8,6 +8,7 @@ import { BoardSpace } from './BoardSpace';
 import { PlayerTiles } from './PlayerTiles';
 import { BlankTileChoice } from './BlankTileChoice';
 import { QuizChoice } from './QuizChoice';
+import { MessageModal } from './MessageModal';
 import { GameControls } from './GameControls';
 import { loadGameData } from '../../utilities/utils';
 import { setBoardRendered } from '../store/boardRenderedSlice';
@@ -132,6 +133,7 @@ export function WordAtWar() {
         <div className="WordAtWarBoard">
           <BlankTileChoice />
           <QuizChoice />
+          <MessageModal />
           {
             board.map((boardRow,r) =>
               <div key={"boardRow"+r} className="boardRow">
