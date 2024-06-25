@@ -58,13 +58,15 @@ export function GameControls() {
   }
 
   async function pass() {
-    const response = await fetch(serverPath+'/php/submitPass.php',
-        {method: "POST",
-        headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
-        body: JSON.stringify({playerID, gameID:game.id})});
-      const gameData = await response.json();
-      if (gameData.status?.name === "failure") dispatch(setMessage(gameData.status.message));
-      else loadGameData(dispatch,gameData,playerID,false);
+    // const response = await fetch(serverPath+'/php/submitPass.php',
+    //   {method: "POST",
+    //   headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
+    //   body: JSON.stringify({playerID, gameID:game.id})});
+    // const gameData = await response.json();
+    // if (gameData.status?.name === "failure") dispatch(setMessage(gameData.status.message));
+    // else loadGameData(dispatch,gameData,playerID,false);
+    if (game.player1passed && game.player2passed) dispatch(setMessage("!PASS-ENDGAME"));
+    else dispatch(setMessage("!PASS"));
   }
 
   async function newGame() {

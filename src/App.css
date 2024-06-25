@@ -223,9 +223,13 @@ body {
   border: 1px solid grey;
   border-radius: 5px;
   padding: 10px 25px;
-  margin-top: 15px;
+  margin: 15px 15px 0 0;
   font-size: large;
   font-weight: bold;
+}
+
+.WordAtWar-modalWindow .submitButton:hover {
+  background: darkblue;
 }
 
 

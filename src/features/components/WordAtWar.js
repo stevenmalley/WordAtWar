@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUser, setCurrentGame, setUser } from '../store/userSlice';
-import { selectGame } from '../store/gameSlice';
+import { selectGame, wipeGameData } from '../store/gameSlice';
 import { selectBoard } from '../store/boardSlice';
 import { selectTiles } from '../store/tileSlice';
 import { BoardSpace } from './BoardSpace';
@@ -16,13 +16,12 @@ import serverPath from '../../serverPath';
 
 
 
-export function WordAtWar() {
+export function WordAtWar({ updateIntervals, setUpdateIntervals }) {
   const { name : username, playerID, currentGameID } = useSelector(selectUser);
   const game = useSelector(selectGame);
   const board = useSelector(selectBoard);
   const tiles = useSelector(selectTiles);
   const dispatch = useDispatch();
-  const [ updateIntervals, setUpdateIntervals ] = useState([]);
 
   useEffect(() => {
     if (tiles.length > 0) {
@@ -67,21 +66,19 @@ export function WordAtWar() {
     updateIntervals.forEach(intID => {
       clearInterval(intID);
     });
-
-    if (currentGameID && game.id === currentGameID && game["player"+game.activePlayer] !== playerID) {
+    if (game.id === currentGameID && game["player"+game.activePlayer] !== playerID) {
       const intervalID = setInterval(
         async () => {
-          
-            console.log("checking for updates");
-            const response = await fetch(serverPath+`/php/getGameData.php?gameID=${game.id}&playerID=${playerID}`);
-            //console.log(response.text());
-            const gameData = await response.json();
+          console.log("checking for updates");
+          const response = await fetch(serverPath+`/php/getGameData.php?gameID=${game.id}&playerID=${playerID}`);
+          //console.log(response.text());
+          const gameData = await response.json();
 
-            if (gameData.game["player"+gameData.game.activePlayer] !== game["player"+game.activePlayer]) {
-              loadGameData(dispatch,gameData,playerID);
-              console.log("loading updates");
-            }
-          }, 5000);
+          if (gameData.game["player"+gameData.game.activePlayer] !== game["player"+game.activePlayer]) {
+            loadGameData(dispatch,gameData,playerID);
+            console.log("loading updates");
+          }
+        }, 5000);
       setUpdateIntervals([intervalID]);
     }
   },[game]);
@@ -96,6 +93,7 @@ export function WordAtWar() {
   }
 
   function seeOtherGames() {
+    dispatch(wipeGameData());
     dispatch(setCurrentGame(null));
   }
 

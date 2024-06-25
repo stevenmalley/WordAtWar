@@ -10,6 +10,7 @@ function App() {
   const { name : username, playerID, currentGameID } = useSelector(selectUser);
   const dispatch = useDispatch();
   const [ playerGames, setPlayerGames ] = useState([]);
+  const [ updateIntervals, setUpdateIntervals ] = useState([]);
 
   /** TESTING */
   useEffect(() => {
@@ -42,6 +43,15 @@ function App() {
   }
 
 
+  // check for updates (when the opponent has made a move)
+  useEffect(() => {
+    updateIntervals.forEach(intID => {
+      clearInterval(intID);
+    });
+    setUpdateIntervals([]);
+  },[currentGameID]);
+
+
   useEffect(() => {
       
     if (playerID) {
@@ -72,7 +82,7 @@ function App() {
           currentGameID ?
 
             <div>
-              <WordAtWar />
+              <WordAtWar updateIntervals={updateIntervals} setUpdateIntervals={setUpdateIntervals} />
               <PlayerTileOverlay />
             </div> :
 
