@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUser, setCurrentGame, setUser } from '../store/userSlice';
 import { selectGame } from '../store/gameSlice';
@@ -46,37 +46,9 @@ export function WordAtWar() {
       localStorage.setItem(`WordAtWar-game${game.id}-player${playerID}-clientTilePositions`,JSON.stringify(clientTilePositions));
     }
   }, [tiles]);
-
-
-  /** TESTING */
-  useEffect(() => {
-    async function fetchLatestGame() {
-      const response = await fetch(serverPath+`/php/findLatestGame.php`);
-      const json = await response.json();
-      dispatch(setCurrentGame(json.gameID));
-    }
-    fetchLatestGame();
-  },[]);
-  useEffect(() => {
-    const parameters = window.location.search.slice(1).split('&').map(par => par.split('='));
-    const login = parameters.find(par => par[0] === "playerID");
-    if (login) {
-      const loginID = parseInt(login[1]);
-      dispatch(setUser({currentGameID, playerID:loginID, name:"TestPlayer"+loginID}));
-    }
-    else dispatch(setUser({currentGameID, playerID:1, name:"TestPlayer1"}));
-  },[]);
-  let secretClicks = 0;
-  function switchUser() {
-    console.log("click");
-    if (secretClicks === 2) {
-      console.log("switch");
-      dispatch(setUser({currentGameID, playerID:2, name:"TestPlayer2"}));
-    } else secretClicks++;
-  }
   
 
-  
+  // get game data
   useEffect(() => {
     if (currentGameID) {
       async function fetchGame() {
@@ -90,7 +62,7 @@ export function WordAtWar() {
   },[playerID,currentGameID]);
 
 
-  
+  // check for updates (when the opponent has made a move)
   useEffect(() => {
     updateIntervals.forEach(intID => {
       clearInterval(intID);
@@ -101,7 +73,7 @@ export function WordAtWar() {
         async () => {
           
             console.log("checking for updates");
-            const response = await fetch(serverPath+`/php/getGameData.php?gameID=${currentGameID}&playerID=${playerID}`);
+            const response = await fetch(serverPath+`/php/getGameData.php?gameID=${game.id}&playerID=${playerID}`);
             //console.log(response.text());
             const gameData = await response.json();
 
@@ -114,8 +86,21 @@ export function WordAtWar() {
     }
   },[game]);
 
+  let secretClicks = 0;
+  function switchUser() {
+    console.log("click");
+    if (secretClicks === 2) {
+      console.log("switch");
+      dispatch(setUser({currentGameID, playerID:2, name:"TestPlayer2"}));
+    } else secretClicks++;
+  }
 
-  
+  function seeOtherGames() {
+    dispatch(setCurrentGame(null));
+  }
+
+
+  // re-render after the board has rendered to allow player tiles to be located
   useEffect(() => {
     if (game.width && document.getElementsByClassName("boardSpace").length === game.width*game.width) {
       dispatch(setBoardRendered());
@@ -125,7 +110,7 @@ export function WordAtWar() {
   return (
     <div className={"WordAtWar"+(game["player"+game.activePlayer] === playerID ? " activePlayer" : "")}>
       <div className="Wrapper">
-        <div className="User">{username}</div>
+        <div className="User">{username}<span><button onClick={seeOtherGames}>see other games</button></span></div>
         <div className="GameInfo">
           <span className={game.activePlayer === 1 ? "activePlayer" : ""}>{game.player1name} &ndash; {game.player1score}</span>
           <span className={game.activePlayer === 2 ? "activePlayer" : ""}>{game.player2name} &ndash; {game.player2score}</span>

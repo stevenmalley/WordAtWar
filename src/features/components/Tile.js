@@ -46,8 +46,6 @@ export function Tile({ data, displaced = false, coords = null }) {
 
   function handleMouseUp(e) {
 
-    console.log(e.type);
-
     let clientX, clientY;
     if (e.type === "touchend") {
       clientX = e.changedTouches[0].clientX;

@@ -20,7 +20,7 @@ export const gameSlice = createSlice({
     quizzes: "", // when words have been submitted, a quiz for each definition is sent, stored here until the player answers it
     quizResults: null, // result of a submitted quiz
     placementScore: null, // amount that would be scored by tiles that have been placed on the board but not yet submitted
-    message: "g", // used whenever the player needs to see a message, eg. "Are you sure you want to pass?", "Word(s) not in our dictionary: ..."
+    message: "", // used whenever the player needs to see a message, eg. "Are you sure you want to pass?", "Word(s) not in our dictionary: ..."
   },
   
   reducers: {

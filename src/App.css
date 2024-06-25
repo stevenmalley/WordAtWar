@@ -17,6 +17,25 @@ body {
   user-select: none;
 }
 
+.GameList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.GameList button {
+  width: 200px;
+  margin: 10px 0;
+}
+
+.GameList button div {
+  display: flex;
+  justify-content: space-between;
+}
+.GameList button div.chooseGameActive {
+  font-weight: bold;
+}
+
 .PlayerTileOverlay {
   position: absolute;
   top: 0;
@@ -59,6 +78,11 @@ body {
   text-align: left;
 }
 
+.User button {
+  position: relative;
+  z-index: 201;
+}
+
 .WordAtWar h1 {
   margin: 10px;
 }
@@ -98,6 +122,8 @@ body {
 
 .WordAtWar-modalWindow {
   width: 80%;
+  max-height: 80%;
+  overflow-y: scroll;
   z-index: 401;
   background: white;
   padding: 20px;
@@ -119,7 +145,6 @@ body {
 
 .QuizChoice-form {
   text-align: left;
-  overflow-y: scroll;
 }
 
 .quizInstruction {
@@ -180,12 +205,12 @@ body {
 }
 
 .quizOption.correct button {
-  background-color: green;
+  background-color: #5afb5a;
   font-weight: bold;
 }
 
 .quizOption.incorrect button {
-  background-color: red;
+  background-color: #ff7a7a;
 }
 
 .QuizChoice-form .formFooter {
