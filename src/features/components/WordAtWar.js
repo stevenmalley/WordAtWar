@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectUser, setCurrentGame, setUser } from '../store/userSlice';
-import { selectGame, wipeGameData } from '../store/gameSlice';
+import { selectUser, setUser } from '../store/userSlice';
+import { selectGame } from '../store/gameSlice';
 import { selectBoard } from '../store/boardSlice';
 import { selectTiles } from '../store/tileSlice';
 import { BoardSpace } from './BoardSpace';
@@ -92,11 +92,6 @@ export function WordAtWar({ updateIntervals, setUpdateIntervals }) {
     } else secretClicks++;
   }
 
-  function seeOtherGames() {
-    dispatch(wipeGameData());
-    dispatch(setCurrentGame(null));
-  }
-
 
   // re-render after the board has rendered to allow player tiles to be located
   useEffect(() => {
@@ -108,7 +103,6 @@ export function WordAtWar({ updateIntervals, setUpdateIntervals }) {
   return (
     <div className={"WordAtWar"+(game["player"+game.activePlayer] === playerID ? " activePlayer" : "")}>
       <div className="Wrapper">
-        <div className="User">{username}<span><button onClick={seeOtherGames}>see other games</button></span></div>
         <div className="GameInfo">
           <span className={game.activePlayer === 1 ? "activePlayer" : ""}>{game.player1name} &ndash; {game.player1score}</span>
           <span className={game.activePlayer === 2 ? "activePlayer" : ""}>{game.player2name} &ndash; {game.player2score}</span>

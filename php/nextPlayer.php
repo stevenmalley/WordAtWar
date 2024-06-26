@@ -10,11 +10,16 @@ $query->execute();
 $tileQuery = $query->get_result();
 
 if (mysqli_fetch_assoc($tileQuery)['COUNT(id)'] == 0) {
+  $conn->query("UPDATE game SET complete = TRUE WHERE id = $gameID");
+}
 
-  // game over
 
-  $conn->query("UPDATE game SET activePlayer = 0, complete = TRUE WHERE id = $gameID");
-  
+
+if (mysqli_fetch_assoc($conn->query("SELECT complete FROM game WHERE id = $gameID"))['complete']) {
+  // GAME OVER
+  // can occur due to tiles running out (above) or 3 consecutive passes (see submitPass.php)
+
+  $conn->query("UPDATE game SET activePlayer = 0 WHERE id = $gameID");
 
   $query = $conn->prepare("SELECT score, location FROM tile WHERE gameID = ? AND location != 'board' AND location != 'bag'");
   $query->bind_param("i", $gameID);

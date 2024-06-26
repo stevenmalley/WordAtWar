@@ -22,6 +22,22 @@ if (mysqli_connect_errno()) {
 
 }
 
+function fail($failureMessage) {
+  global $conn;
+  
+  $output['status']['code'] = "401";
+  $output['status']['name'] = "failure";
+  $output['status']['description'] = "bad request";
+  $output['status']['message'] = $failureMessage;
+
+  mysqli_close($conn);
+
+  echo json_encode($output);
+
+  exit;
+
+}
+
 
 $post = json_decode(file_get_contents('php://input'), true);
 
@@ -57,24 +73,7 @@ if ($activePlayerID != $playerID) fail("It is not your turn");
 
 
 
-
-function fail($failureMessage) {
-  global $conn;
-  
-  $output['status']['code'] = "401";
-  $output['status']['name'] = "failure";
-  $output['status']['description'] = "bad request";
-  $output['status']['message'] = $failureMessage;
-
-  mysqli_close($conn);
-
-  echo json_encode($output);
-
-  exit;
-
-}
-
-
+if ($gameData["player1passed"] && $gameData["player2passed"]) $conn->query("UPDATE game SET complete = TRUE WHERE id = $gameID");
 
 $conn->query("UPDATE game SET player{$activePlayer}passed = TRUE WHERE id = $gameID");
 

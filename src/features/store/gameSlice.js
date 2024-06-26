@@ -2,6 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const nullGame = {
   id: null,
+  creation_time: null,
+  modification_time: null,
   mode: null, // "feud", "scrabble", "friends", indicating which board is being used
   width: null, // width of the board
   player1: null, // player ID of the first player

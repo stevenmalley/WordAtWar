@@ -25,6 +25,23 @@ if (mysqli_connect_errno()) {
 
 }
 
+function fail($failureMessage) {
+  global $conn;
+  
+  $output['status']['code'] = "401";
+  $output['status']['name'] = "failure";
+  $output['status']['description'] = "bad request";
+  $output['status']['message'] = $failureMessage;
+
+  mysqli_close($conn);
+
+  echo json_encode($output);
+
+  exit;
+
+}
+
+
 
 $post = json_decode(file_get_contents('php://input'), true);
 
@@ -303,26 +320,9 @@ else if (sizeof($invalidWords) == 1) fail(implode(", ",$invalidWords)." is not a
 
 
 
-function fail($failureMessage) {
-  global $conn;
-  
-  $output['status']['code'] = "401";
-  $output['status']['name'] = "failure";
-  $output['status']['description'] = "bad request";
-  $output['status']['message'] = $failureMessage;
-
-  mysqli_close($conn);
-
-  echo json_encode($output);
-
-  exit;
-
-}
-
-
-
-
 /* MODIFY DATABASE */
+
+$conn->query("UPDATE game SET player{$activePlayer}passed = FALSE WHERE id = $gameID");
 
 // set tiles to new locations and positions
 $queryString = "UPDATE tile SET location = 'board', position = CASE id";

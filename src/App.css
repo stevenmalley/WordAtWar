@@ -58,9 +58,17 @@ body {
   pointer-events: none;
 }
 
-.Wrapper {
-  width: 100vw;
-  max-width: 600px; 
+.User {
+  margin: 0 auto 15px;
+  max-width: 600px;
+  font-size: 18px;
+  color: grey;
+  text-align: left;
+}
+
+.User button {
+  position: relative;
+  z-index: 201;
 }
 
 .WordAtWar {
@@ -72,15 +80,9 @@ body {
   font-size: calc(10px + 2vmin);
 }
 
-.User {
-  font-size: 18px;
-  color: grey;
-  text-align: left;
-}
-
-.User button {
-  position: relative;
-  z-index: 201;
+.Wrapper {
+  width: 100vw;
+  max-width: 600px; 
 }
 
 .WordAtWar h1 {
@@ -193,7 +195,7 @@ body {
 }
 
 .quizOption button:not(.selectedOption):not([disabled]):hover {
-  background-color: rgb(255, 233, 107);
+  background-color: rgb(255, 227, 68);
 }
 
 .quizOption .selectedOption {

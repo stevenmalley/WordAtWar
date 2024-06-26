@@ -22,6 +22,22 @@ if (mysqli_connect_errno()) {
 
 }
 
+function fail($failureMessage) {
+  global $conn;
+  
+  $output['status']['code'] = "401";
+  $output['status']['name'] = "failure";
+  $output['status']['description'] = "bad request";
+  $output['status']['message'] = $failureMessage;
+
+  mysqli_close($conn);
+
+  echo json_encode($output);
+
+  exit;
+
+}
+
 
 $post = json_decode(file_get_contents('php://input'), true);
 
@@ -99,24 +115,6 @@ foreach($quizzes as $quiz) {
   if (!$wordFound) {
     fail("Required answer to quiz missing");
   }
-}
-
-
-
-function fail($failureMessage) {
-  global $conn;
-  
-  $output['status']['code'] = "401";
-  $output['status']['name'] = "failure";
-  $output['status']['description'] = "bad request";
-  $output['status']['message'] = $failureMessage;
-
-  mysqli_close($conn);
-
-  echo json_encode($output);
-
-  exit;
-
 }
 
 

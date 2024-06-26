@@ -4,7 +4,7 @@ include_once("boardData.php");
 
 /* GAME DATA */
 
-$query = $conn->prepare("SELECT game.id, game.mode, game.width, game.player1, game.player2, game.player1score, game.player2score, game.activePlayer, game.player1passed, game.player2passed, game.complete, t2.player1name, t2.player2name FROM
+$query = $conn->prepare("SELECT game.id, game.creation_time, game.modification_time, game.mode, game.width, game.player1, game.player2, game.player1score, game.player2score, game.activePlayer, game.player1passed, game.player2passed, game.complete, t2.player1name, t2.player2name FROM
   (SELECT t1.player1name, users.name as player2name FROM
     (SELECT game.id, game.player2, users.name as player1name FROM game JOIN users ON game.player1 = users.id WHERE game.id = ?) as t1
     JOIN users on t1.player2 = users.id WHERE t1.id = ?) AS t2
@@ -22,28 +22,6 @@ if (!$gameOutput) {
 
 
 
-// $query = $conn->prepare("SELECT id, mode, width, player1, player2, player1score, player2score, activePlayer, player1passed, player2passed, complete FROM game WHERE game.id = ?");
-// $query->bind_param("i", $gameID);
-// $query->execute();
-// $result = $query->get_result();
-
-// $gameOutput = mysqli_fetch_assoc($result);
-
-// if (!$gameOutput) {
-//   echo json_encode(["game"=>null, "message"=>"game $gameID not found"]);
-//   exit;
-// }
-
-// $query = $conn->prepare("SELECT name FROM users WHERE users.id = ?");
-// $query->bind_param("i", $gameOutput["player1"]);
-// $query->execute();
-// $result = $query->get_result();
-// $gameOutput["player1name"] = mysqli_fetch_assoc($result)["name"];
-// $query = $conn->prepare("SELECT name FROM users WHERE users.id = ?");
-// $query->bind_param("i", $gameOutput["player2"]);
-// $query->execute();
-// $result = $query->get_result();
-// $gameOutput["player2name"] = mysqli_fetch_assoc($result)["name"];
 
 
 

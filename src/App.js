@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { WordAtWar } from './features/components/WordAtWar';
 import { PlayerTileOverlay } from './features/components/PlayerTileOverlay';
 import { selectUser, setUser, setCurrentGame } from './features/store/userSlice';
+import { wipeGameData } from './features/store/gameSlice';
+import { wipeTileData } from './features/store/tileSlice';
 import serverPath from './serverPath';
 import './App.css';
 
@@ -37,7 +39,10 @@ function App() {
   }
 
   async function startNewGame() {
-    const response = await fetch(serverPath+`/php/setupGame.php?player1ID=2&player2ID=1&gameMode=feud`);
+    const response = await fetch(serverPath+'/php/setupGame.php',
+      {method: "POST",
+      headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
+      body: JSON.stringify({playerIDs:[1,2], mode:"feud"})});
     const json = await response.json();
     dispatch(setCurrentGame(json.gameID));
   }
@@ -65,8 +70,12 @@ function App() {
             headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
             body: JSON.stringify({playerID})});
           const jsonResponse = await response.json();
-          setPlayerGames(jsonResponse);
-          console.log(jsonResponse);
+
+          let orderedGames = [];
+          orderedGames = orderedGames.concat(jsonResponse.filter(game => !game.complete && game["player"+game.activePlayer] === playerID));
+          orderedGames = orderedGames.concat(jsonResponse.filter(game => !game.complete && game["player"+game.activePlayer] !== playerID));
+          orderedGames = orderedGames.concat(jsonResponse.filter(game => game.complete));
+          setPlayerGames(orderedGames);
         }
         getPlayerGames();
       }
@@ -74,8 +83,15 @@ function App() {
     }
   }, [playerID, currentGameID]);
 
+  function seeOtherGames() {
+    dispatch(wipeTileData());
+    dispatch(wipeGameData());
+    dispatch(setCurrentGame(null));
+  }
+
   return (
     <div className="App">
+      <div className="User">{username}{currentGameID? <span><button onClick={seeOtherGames}>see other games</button></span> : null}</div>
       {
         playerID ?
 
@@ -87,10 +103,16 @@ function App() {
             </div> :
 
             <div>
-              <div>select game</div>
-                <div className="GameList">
-                  {
-                    playerGames.map((game,i) => <button key={`chooseGameButton_${i}`} onClick={() => loadGame(game.id)}>
+              <div className="GameList">
+                {
+                  playerGames.map((game,i) => {
+                    const gameStatus = game.complete?
+                      {message: "GAME OVER", style: {fontWeight:"bold"}} :
+                        game["player"+game.activePlayer] === playerID?
+                          {message: "It's your turn!", style: {color:"red"}} :
+                          {message: "", style: {}};
+
+                    return <button key={`chooseGameButton_${i}`} onClick={() => loadGame(game.id)}>
                       <div>
                         <div className={game.activePlayer === 1? "chooseGameActive" : ""}>{game.player1name}</div>
                         <div className={game.activePlayer === 2? "chooseGameActive" : ""}>{game.player2name}</div>
@@ -99,10 +121,10 @@ function App() {
                         <div>{game.player1score}</div>
                         <div>{game.player2score}</div>
                       </div>
-                      <div style={{color:"red"}}>{game["player"+game.activePlayer] === playerID? "It's your turn!" : ""}</div>
-                    </button>)
-                  }
-                </div>
+                      <span style={gameStatus.style}>{gameStatus.message}</span>
+                    </button>})
+                }
+              </div>
               <div><button onClick={startNewGame}>START NEW GAME</button></div>
             </div>
 

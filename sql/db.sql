@@ -6,6 +6,8 @@ CREATE TABLE users (
 
 CREATE TABLE game (
   id SERIAL PRIMARY KEY,
+  creation_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+  modification_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   mode TEXT, -- (bonuses pattern): scrabble, feud, friends, custom
   width INTEGER DEFAULT 15,
   player1 INTEGER REFERENCES user(id),
